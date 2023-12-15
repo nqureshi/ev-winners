@@ -43,7 +43,6 @@ export default async function Home() {
           <Badge variant="secondary">Podcasts</Badge>
           <Badge variant="secondary">Blogs and Substacks</Badge>
           <Badge variant="secondary">Biotech</Badge>
-          <Badge variant="secondary">Nuclear</Badge>
         </div>
         <div className="flex">
           <Input className="flex-1 mr-2" placeholder="Search projects, ideas or people..." />
