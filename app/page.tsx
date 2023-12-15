@@ -44,10 +44,10 @@ export default function Home() {
           <Button>Search</Button>
         </div>
       </div>
-      <div className="flex items-center mb-4">
+      <div className="flex items-center mb-4 w-1/4">
         <Select className="w-16">
           <SelectTrigger id="batch">
-            <SelectValue placeholder="Select a cohort..." />
+            <SelectValue placeholder="Filter by cohort..." />
           </SelectTrigger>
           <SelectContent position="popper">
             <SelectItem value="w09">Cohort 1</SelectItem>
@@ -59,49 +59,19 @@ export default function Home() {
       <Table>
         <TableBody>
           <TableRow>
-            <TableCell className="font-medium">Airbnb</TableCell>
-            <TableCell>W09</TableCell>
-            <TableCell>Book accommodations around the world.</TableCell>
+            <TableCell className="font-medium">Nabeel S. Qureshi</TableCell>
+            <TableCell>Cohort 27</TableCell>
+            <TableCell>To support his next project.</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell className="font-medium">Volantio</TableCell>
-            <TableCell>W09</TableCell>
-            <TableCell>Post-booking revenue and capacity optimization for airlines...</TableCell>
+            <TableCell className="font-medium">Nabeel S. Qureshi</TableCell>
+            <TableCell>Cohort 27</TableCell>
+            <TableCell>To support his next project.</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell className="font-medium">Wattvision</TableCell>
-            <TableCell>W09</TableCell>
-            <TableCell>Sensors and software for energy tracking. Like 'fitbit' for your...</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="font-medium">Cloudkick</TableCell>
-            <TableCell>W09</TableCell>
-            <TableCell>Cloudkick is system to manage cloud servers, such as the Rackspace Cloud and Ama...</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="font-medium">Echodio</TableCell>
-            <TableCell>W09</TableCell>
-            <TableCell>Sync and stream your music across any device. Acquired in 2009.</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="font-medium">reMail</TableCell>
-            <TableCell>W09</TableCell>
-            <TableCell>Email search for iPhone. Acquired by Google in Feb 2010.</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="font-medium">Divvyshot</TableCell>
-            <TableCell>W09</TableCell>
-            <TableCell>Divvyshot is a photo-sharing platform that enables users to share full resolutio...</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="font-medium">Heyzap</TableCell>
-            <TableCell>W09</TableCell>
-            <TableCell>Heyzap (acquired by Fyber for $45m in 2016) is one of the largest...</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="font-medium">Voxli</TableCell>
-            <TableCell>W09</TableCell>
-            <TableCell>Voxli offers browser-based group voice chat for gamers and teams.</TableCell>
+            <TableCell className="font-medium">Nabeel S. Qureshi</TableCell>
+            <TableCell>Cohort 27</TableCell>
+            <TableCell>To support his next project.</TableCell>
           </TableRow>
         </TableBody>
       </Table>
