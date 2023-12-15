@@ -50,18 +50,6 @@ export default async function Home() {
           <Button>Search</Button>
         </div>
       </div>
-      <div className="flex items-center mb-4 w-1/4">
-        <Select className="w-16">
-          <SelectTrigger id="batch">
-            <SelectValue placeholder="Filter by cohort..." />
-          </SelectTrigger>
-          <SelectContent position="popper">
-            <SelectItem value="w09">Cohort 1</SelectItem>
-            <SelectItem value="s09">Cohort 2</SelectItem>
-            <SelectItem value="w10">Cohort 3</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
       <div>
         <WinnersTable columns={columns} data={data} />
       </div>
