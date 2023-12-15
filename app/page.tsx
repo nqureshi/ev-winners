@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@/components/ui/select"
-import { TableHeader, TableCell, TableRow, TableBody, Table } from "@/components/ui/table"
+import WinnersTable from "./winnersTable"
 import { promises as fs } from 'fs';
 
 export default async function Home() {
@@ -61,19 +61,8 @@ export default async function Home() {
         </Select>
       </div>
       <div>
-        <Table>
-          <TableBody>
-            {data.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium">{item.name}</TableCell>
-                <TableCell>{item.batch}</TableCell>
-                <TableCell>{item.description}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <WinnersTable data={data} />
       </div>
     </div>
-
   )
 }
