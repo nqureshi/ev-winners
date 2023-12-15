@@ -11,7 +11,14 @@ import { Winner, columns } from "./columns"
 import SearchBar from "./searchBar"
 import WinnersTable from "./winnersTable"
 
-export default async function Home() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+  };
+}) {
+  const query = searchParams?.query || '';
   const file = await fs.readFile(process.cwd() + '/data/ev-winners-with-embeddings.json', 'utf8');
   const data = JSON.parse(file);
 
