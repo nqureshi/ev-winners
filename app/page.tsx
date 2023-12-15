@@ -5,8 +5,12 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@/components/ui/select"
 import { TableCell, TableRow, TableBody, Table } from "@/components/ui/table"
+import { promises as fs } from 'fs';
 
-export default function Home() {
+export default async function Home() {
+  const file = await fs.readFile(process.cwd() + '/data/ev-winners-with-embeddings.json', 'utf8');
+  const data = JSON.parse(file);
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white">
       <div className="flex justify-between items-center mb-4">
@@ -40,7 +44,7 @@ export default function Home() {
           <Badge variant="secondary">Nuclear</Badge>
         </div>
         <div className="flex">
-          <Input className="flex-1 mr-2" placeholder="Name a company or pitch an idea..." />
+          <Input className="flex-1 mr-2" placeholder="Search projects, ideas or people..." />
           <Button>Search</Button>
         </div>
       </div>
@@ -58,21 +62,13 @@ export default function Home() {
       </div>
       <Table>
         <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">Nabeel S. Qureshi</TableCell>
-            <TableCell>Cohort 27</TableCell>
-            <TableCell>To support his next project.</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="font-medium">Nabeel S. Qureshi</TableCell>
-            <TableCell>Cohort 27</TableCell>
-            <TableCell>To support his next project.</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="font-medium">Nabeel S. Qureshi</TableCell>
-            <TableCell>Cohort 27</TableCell>
-            <TableCell>To support his next project.</TableCell>
-          </TableRow>
+          {data.map((item, index) => (
+            <TableRow key={index}>
+              <TableCell className="font-medium">{item.name}</TableCell>
+              <TableCell>{item.batch}</TableCell>
+              <TableCell>{item.description}</TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </div>
