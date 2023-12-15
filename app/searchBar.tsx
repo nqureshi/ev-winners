@@ -1,10 +1,28 @@
 "use client"
 
+import React from 'react';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+
+
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
 export default function searchBar() {
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const { replace } = useRouter();
+
+    function handleSearch(term: string) {
+        const params = new URLSearchParams(searchParams);
+        if (term) {
+            params.set('query', term);
+        } else {
+            params.delete('query');
+        }
+        replace(`${pathname}?${params.toString()}`);
+    }
+
     return (
         <>
             <h2 className="font-semibold mb-2">Semantic search over every Emergent Ventures winner</h2>
@@ -24,9 +42,16 @@ export default function searchBar() {
                 <Badge variant="secondary">Blogs and Substacks</Badge>
                 <Badge variant="secondary">Biotech</Badge>
             </div>
-            <div className="flex">
-                <Input className="flex-1 mr-2" placeholder="Search projects, ideas or people..." />
-                <Button>Search</Button>
+            <div>
+                <form onSubmit={handleSearch} className="flex">
+                    <Input
+                        className="flex-1 mr-2"
+                        placeholder="Search projects, ideas or people..."
+                        name="query"
+                        defaultValue={searchParams.get('query')?.toString()}
+                    />
+                    <Button type="submit">Search</Button>
+                </form>
             </div>
         </>
     )
