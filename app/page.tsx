@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@/components/ui/select"
 import WinnersTable from "./winnersTable"
 import { promises as fs } from 'fs';
+import { Winner, columns } from "./columns"
+
 
 export default async function Home() {
   const file = await fs.readFile(process.cwd() + '/data/ev-winners-with-embeddings.json', 'utf8');
@@ -61,7 +63,7 @@ export default async function Home() {
         </Select>
       </div>
       <div>
-        <WinnersTable data={data} />
+        <WinnersTable columns={columns} data={data} />
       </div>
     </div>
   )
