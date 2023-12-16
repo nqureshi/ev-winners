@@ -10,7 +10,7 @@ async function get_sentiment(query: string) {
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
-    const query = searchParams.get('query')
+    const query = searchParams.get('query') || ''
     const sentiment = await get_sentiment(query)
     return NextResponse.json({ query: query, message: sentiment }, { status: 200 });
 }
