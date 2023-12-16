@@ -6,7 +6,7 @@ import { Badge, badgeVariants } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
-export default function searchBar() {
+export default function SearchBar() {
     const BADGES = [
         'Progress studies', 'Climate change', 'AI', 'Career development', 'Podcasts', 'Blogs and Substacks', 'Biotech',
         'Space', 'Mental health', 'Education', 'Cities', 'Robotics', 'Economics', 'Virtual reality',
