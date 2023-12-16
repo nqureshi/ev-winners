@@ -13,14 +13,16 @@ import WinnersTable from "./winnersTable"
 import { getSortedData } from './utils/getSortedData'
 import Footer from "./footer"
 
+const path = require('path');
+
 // this fetches the embedding for any semantic search query from api/similarity
 async function fetchSimilarity(query: string) {
   const API_URL = process.env.NODE_ENV === 'development'
     ? 'http://localhost:3000/api/similarity?query='
-    : `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/similarity?query=`;
+    : '/api/similarity?query=';
 
   try {
-    const response = await fetch(API_URL + query, { cache: 'no-store' });
+    const response = await fetch(API_URL + query), { cache: 'no-store' });
     const data = await response.json();
     // console.log(data); // Log the response
     return data;
@@ -39,7 +41,6 @@ export default async function Page({
 }) {
   const query = searchParams?.query || '';
 
-  const path = require('path');
   // get full dataset to render in Table, this is rendered on first load
   const file = await fs.readFile(path.resolve(process.cwd() + '/app/data/ev-winners-with-embeddings.json'), 'utf8');
   const data = JSON.parse(file);
