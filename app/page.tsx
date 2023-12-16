@@ -40,7 +40,7 @@ export default async function Page({
   const query = searchParams?.query || '';
 
   // get full dataset to render in Table, this is rendered on first load
-  const file = await fs.readFile(process.cwd() + '/public/data/ev-winners-with-embeddings.json', 'utf8');
+  const file = await fs.readFile(process.cwd() + '/app/data/ev-winners-with-embeddings.json', 'utf8');
   const data = JSON.parse(file);
 
   // this is rendered in the Table
