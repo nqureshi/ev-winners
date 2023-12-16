@@ -20,7 +20,7 @@ async function fetchSimilarity(query: string) {
     : `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/similarity?query=`;
 
   try {
-    const response = await fetch(API_URL + query);
+    const response = await fetch(API_URL + query, { cache: 'no-store' });
     const data = await response.json();
     // console.log(data); // Log the response
     return data;
