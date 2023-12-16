@@ -2,8 +2,6 @@
 
 import React from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-
-
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -46,7 +44,7 @@ export default function searchBar() {
                 <form onSubmit={handleSearch} className="flex">
                     <Input
                         className="flex-1 mr-2"
-                        placeholder="Search projects, ideas or people..."
+                        placeholder="Search projects, ideas, or fun things..."
                         name="query"
                         defaultValue={searchParams.get('query')?.toString()}
                     />
