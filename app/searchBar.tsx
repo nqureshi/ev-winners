@@ -49,7 +49,7 @@ export default function SearchBar() {
                 ))}
             </div >
             <div>
-                <form onSubmit={handleSearch} className="flex">
+                <form onSubmit={() => handleSearch} className="flex">
                     <Input
                         className="flex-1 mr-2"
                         placeholder="Search projects, ideas, or fun things..."
