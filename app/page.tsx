@@ -15,7 +15,9 @@ import Footer from "./footer"
 
 // this fetches the embedding for any semantic search query from api/similarity
 async function fetchSimilarity(query: string) {
-  const API_URL = 'http://localhost:3000/api/similarity?query=';
+  const API_URL = process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3000/api/similarity?query='
+    : `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/similarity?query=`;
 
   try {
     const response = await fetch(API_URL + query);
