@@ -25,7 +25,7 @@ export const columns: ColumnDef<Winner>[] = [
     },
     {
         accessorKey: "batch",
-        header: "Batch",
+        header: "Cohort",
     },
     {
         accessorKey: "description",
