@@ -31,11 +31,11 @@ export default function SearchBar() {
         <>
             <h2 className="font-semibold mb-2">Semantic search over every Emergent Ventures winner</h2>
             <p className="mb-4 text-sm">
-                This site uses semantic similarity to search all Emergent Ventures grantees. This search bar doesn't need you to get the keywords exactly right, only close enough, to find them.
+                This site uses semantic similarity to search all Emergent Ventures grantees. This search bar doesn&lsquo;t need you to get the keywords exactly right, only close enough, to find them.
             </p>
             <p className="mb-4 text-sm">
-                You can search for something very specific like "Ukraine" or "career development", or something very broad like
-                "books" or "podcasts". Here are a few starting places:
+                You can search for something very specific like &ldquo;Ukraine&rdquo; or &ldquo;career development&rdquo;, or something very broad like
+                &ldquo;books&rdquo; or &ldquo;podcasts&rdquo;. Here are a few starting places:
             </p>
             <div className="flex flex-wrap gap-2 mb-4">
                 {BADGES.map((badgeText) => (
