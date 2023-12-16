@@ -4,6 +4,8 @@ import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
+export const runtime = 'edge' // 'nodejs' (default) | 'edge'
+
 export const metadata: Metadata = {
   title: 'Emergent Ventures Winners',
   description: 'Semantic search for EV winners.',
