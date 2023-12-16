@@ -1,12 +1,18 @@
 "use client"
 
-import React from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import { Badge } from "@/components/ui/badge"
+import Link from 'next/link'
+import { Badge, badgeVariants } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
 export default function searchBar() {
+    const BADGES = [
+        'Progress studies', 'Climate change', 'AI safety', 'Career development', 'Podcasts', 'Blogs and Substacks', 'Biotech',
+        'Space', 'Mental health', 'Education', 'Cities', 'Robotics', 'Economics', 'Virtual reality',
+        'Startups', 'Venture capital'
+    ]
+
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();
@@ -32,14 +38,16 @@ export default function searchBar() {
                 "books" or "podcasts". Here are a few starting places:
             </p>
             <div className="flex flex-wrap gap-2 mb-4">
-                <Badge variant="secondary">Progress studies</Badge>
-                <Badge variant="secondary">Climate change</Badge>
-                <Badge variant="secondary">AI safety</Badge>
-                <Badge variant="secondary">Career development</Badge>
-                <Badge variant="secondary">Podcasts</Badge>
-                <Badge variant="secondary">Blogs and Substacks</Badge>
-                <Badge variant="secondary">Biotech</Badge>
-            </div>
+                {BADGES.map((badgeText) => (
+                    <Link
+                        key={badgeText}
+                        className={`badge ${badgeVariants({ variant: "secondary" })}`}
+                        href={`/?query=${badgeText}`}
+                    >
+                        {badgeText}
+                    </Link>
+                ))}
+            </div >
             <div>
                 <form onSubmit={handleSearch} className="flex">
                     <Input
