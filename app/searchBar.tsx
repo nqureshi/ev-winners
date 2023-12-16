@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 
 export default function searchBar() {
     const BADGES = [
-        'Progress studies', 'Climate change', 'AI safety', 'Career development', 'Podcasts', 'Blogs and Substacks', 'Biotech',
+        'Progress studies', 'Climate change', 'AI', 'Career development', 'Podcasts', 'Blogs and Substacks', 'Biotech',
         'Space', 'Mental health', 'Education', 'Cities', 'Robotics', 'Economics', 'Virtual reality',
         'Startups', 'Venture capital'
     ]

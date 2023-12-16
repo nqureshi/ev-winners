@@ -11,13 +11,14 @@ import { Winner, columns } from "./columns"
 import SearchBar from "./searchBar"
 import WinnersTable from "./winnersTable"
 import { getSortedData } from './utils/getSortedData'
+import Footer from "./footer"
 
 // this fetches the embedding for any semantic search query from api/similarity
 async function fetchSimilarity(query: string) {
   const API_URL = 'http://localhost:3000/api/similarity?query=';
 
   try {
-    const response = await fetch(API_URL + query, { cache: 'no-store' });
+    const response = await fetch(API_URL + query);
     const data = await response.json();
     // console.log(data); // Log the response
     return data;
@@ -55,7 +56,7 @@ export default async function Page({
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-bold">Emergent Ventures Winners</h1>
         <div className="flex space-x-4">
-          <Link className="text-blue-600" href="#">
+          <Link href="#footer" className="text-blue-600">
             about
           </Link>
           <Link className="text-blue-600" href="#">
@@ -68,6 +69,9 @@ export default async function Page({
       </div>
       <div>
         <WinnersTable columns={columns} data={effectiveData} />
+      </div>
+      <div id="footer" className="text-gray-500 mt-4 w-4/5">
+        <Footer />
       </div>
     </div>
   )
