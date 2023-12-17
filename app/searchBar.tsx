@@ -43,9 +43,9 @@ export default function SearchBar() {
         } else {
             params.delete('query');
         }
-        let queryString = params.get('query').replace(/\+/g, ' ')
-        let embedding = fetchSimilarity(queryString).then((res) => res.message);
-        setSearch(embedding);
+        const search = params.get('query') || '';
+        let embedding = fetchSimilarity(search).
+            then((res) => setSearch(res.message));
         replace(`${pathname}?${params.toString()}`);
     }
 
