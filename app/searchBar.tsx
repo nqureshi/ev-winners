@@ -45,13 +45,14 @@ export default function SearchBar() {
             params.delete('query');
         }
         replace(`${pathname}?${params.toString()}`);
-        setQuery(params.toString());
     }
 
     useEffect(() => {
+        const params = new URLSearchParams(searchParams);
+        setQuery(params.get('query') || '');
         let e = fetchSimilarity(query).
             then((res) => setEmbedding(res.message));
-    });
+    }, [searchParams, query]);
 
     return (
         <>
@@ -63,6 +64,7 @@ export default function SearchBar() {
                 You can search for something very specific like &ldquo;Ukraine&rdquo; or &ldquo;career development&rdquo;, or something very broad like
                 &ldquo;books&rdquo; or &ldquo;podcasts&rdquo;. Here are a few starting places:
             </p>
+            <p>Your query: {query}</p>
             <p>Your embedding: {embedding}</p>
             <div className="flex flex-wrap gap-2 mb-4">
                 {BADGES.map((badgeText) => (
