@@ -39,7 +39,7 @@ export default async function Page({
     const newData = await getSortedData(data, embedding);
     effectiveData = newData;
   }*/
-
+ 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white">
       <div className="flex justify-between items-center mb-4">
@@ -53,9 +53,11 @@ export default async function Page({
           </Link>
         </div>
       </div>
+      <Suspense>
         <div className="bg-[#00c79f] p-4 rounded-lg mb-6 text-black">
-        <SearchBar />
-      </div>
+          <SearchBar />
+        </div>
+      </Suspense>
       <div>
         <WinnersTable columns={columns} data={effectiveData} />
       </div>

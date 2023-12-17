@@ -14,7 +14,7 @@ async function fetchSimilarity(query: string) {
       : '/api/similarity?query=';
   
     try {
-      const response = await fetch((API_URL + query), { cache: 'no-store' });
+      const response = await fetch((API_URL + query));
       const data = await response.json();
       // console.log(data); // Log the response
       return data;
@@ -25,7 +25,6 @@ async function fetchSimilarity(query: string) {
   }
 
 export default function SearchBar() {
-    //const [query, setQuery] = useState('')
     const [embedding, setEmbedding] = useState('');
 
     const BADGES = [
@@ -36,7 +35,7 @@ export default function SearchBar() {
 
     const searchParams = useSearchParams();
     const pathname = usePathname();
-    const { replace, push } = useRouter();
+    const { push } = useRouter();
     const params = useMemo(() => new URLSearchParams(searchParams), [searchParams]);
 
     function handleSearch(term: string) {
