@@ -39,13 +39,13 @@ export default function SearchBar() {
             </p>
             <div className="flex flex-wrap gap-2 mb-4">
                 {BADGES.map((badgeText) => (
-                    <Link
+                    <button
                         key={badgeText}
                         className={`badge ${badgeVariants({ variant: "secondary" })}`}
-                        href={`/?query=${badgeText}`}
+                        onClick={() => handleSearch(badgeText)}
                     >
                         {badgeText}
-                    </Link>
+                    </button>
                 ))}
             </div >
             <div>
