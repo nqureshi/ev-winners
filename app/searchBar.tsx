@@ -6,6 +6,9 @@ import { Badge, badgeVariants } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
+import { QrCode } from 'lucide-react';
+
+import { useMemo } from "react";
 
 async function fetchSimilarity(query: string) {
     const API_URL = process.env.NODE_ENV === 'development'
@@ -24,7 +27,7 @@ async function fetchSimilarity(query: string) {
   }
 
 export default function SearchBar() {
-    const [query, setQuery] = useState('')
+    //const [query, setQuery] = useState('')
     const [embedding, setEmbedding] = useState('');
 
     const BADGES = [
@@ -35,33 +38,28 @@ export default function SearchBar() {
 
     const searchParams = useSearchParams();
     const pathname = usePathname();
-    const { replace } = useRouter();
+    const { push } = useRouter();
+    const params = useMemo(() => new URLSearchParams(searchParams), [searchParams]);
 
     function handleSearch(term: string) {
-        const params = new URLSearchParams(searchParams);
         if (term) {
             params.set('query', term);
         } else {
             params.delete('query');
         }
-        replace(`${pathname}?${params.toString()}`);
+        push(`${pathname}?${params.toString()}`);
     }
 
     useEffect(() => {
-        const params = new URLSearchParams(searchParams);
         const q = params.get('query') || '';
-        setQuery(q);
-    }, [searchParams]);
-    
-    useEffect(() => {
-        if (query !== '') {
-            fetchSimilarity(query)
+        if (q !== '') {
+            fetchSimilarity(q)
                 .then((res) => setEmbedding(res.message))
                 .catch((error) => {
                     console.error('Error fetching similarity:', error);
                 });
         }
-    }, [query]);
+    }, [params]);
 
     return (
         <>
@@ -73,7 +71,7 @@ export default function SearchBar() {
                 You can search for something very specific like &ldquo;Ukraine&rdquo; or &ldquo;career development&rdquo;, or something very broad like
                 &ldquo;books&rdquo; or &ldquo;podcasts&rdquo;. Here are a few starting places:
             </p>
-            <p>Your query: {query}</p>
+            <p>Your query: {params.get('query')}</p>
             <p>Your embedding: {embedding[0]}</p>
             <div className="flex flex-wrap gap-2 mb-4">
                 {BADGES.map((badgeText) => (
