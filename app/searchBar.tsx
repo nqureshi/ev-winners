@@ -46,12 +46,21 @@ export default function SearchBar() {
         }
         replace(`${pathname}?${params.toString()}`);
     }
-
     useEffect(() => {
         const params = new URLSearchParams(searchParams);
-        setQuery(params.get('query') || '');
-        let e = fetchSimilarity(query).
-            then((res) => setEmbedding(res.message));
+        const q = params.get('query') || '';
+
+        if (q !== query) {
+            setQuery(q);
+
+            if (q !== '') {
+                fetchSimilarity(q)
+                    .then((res) => setEmbedding(res.message))
+                    .catch((error) => {
+                        console.error('Error fetching similarity:', error);
+                    });
+            }
+        }
     }, [searchParams, query]);
 
     return (
