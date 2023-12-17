@@ -53,11 +53,9 @@ export default async function Page({
           </Link>
         </div>
       </div>
-      <Suspense>
         <div className="bg-[#00c79f] p-4 rounded-lg mb-6 text-black">
         <SearchBar />
       </div>
-      </Suspense>
       <div>
         <WinnersTable columns={columns} data={effectiveData} />
       </div>
