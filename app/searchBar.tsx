@@ -51,7 +51,6 @@ export default function SearchBar() {
     useEffect(() => {
         let e = fetchSimilarity(query).
             then((res) => setEmbedding(res.message));
-        setEmbedding(e);
     });
 
     return (
