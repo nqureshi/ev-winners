@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import Link from "next/link"
 
+import { Suspense } from 'react'
+
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@/components/ui/select"
@@ -20,11 +22,9 @@ export default async function Page({
 }: {
   searchParams?: {
     query?: string;
-    //embedding?: number[];
   };
 }) {
   const query = searchParams?.query || '';
-  // const embedding = searchParams?.embedding;
 
   // get full dataset to render in Table, this is rendered on first load
   const file = await fs.readFile(path.resolve(process.cwd() + '/app/data/ev-winners-with-embeddings.json'), 'utf8');
@@ -53,9 +53,11 @@ export default async function Page({
           </Link>
         </div>
       </div>
-      <div className="bg-[#00c79f] p-4 rounded-lg mb-6 text-black">
+      <Suspense>
+        <div className="bg-[#00c79f] p-4 rounded-lg mb-6 text-black">
         <SearchBar />
       </div>
+      </Suspense>
       <div>
         <WinnersTable columns={columns} data={effectiveData} />
       </div>

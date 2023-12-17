@@ -5,10 +5,8 @@ import Link from 'next/link'
 import { Badge, badgeVariants } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { QrCode } from 'lucide-react';
-
-import { useMemo } from "react";
 
 async function fetchSimilarity(query: string) {
     const API_URL = process.env.NODE_ENV === 'development'
@@ -38,7 +36,7 @@ export default function SearchBar() {
 
     const searchParams = useSearchParams();
     const pathname = usePathname();
-    const { push } = useRouter();
+    const { replace, push } = useRouter();
     const params = useMemo(() => new URLSearchParams(searchParams), [searchParams]);
 
     function handleSearch(term: string) {
@@ -54,7 +52,9 @@ export default function SearchBar() {
         const q = params.get('query') || '';
         if (q !== '') {
             fetchSimilarity(q)
-                .then((res) => setEmbedding(res.message))
+                .then((res) => {
+                    setEmbedding(res.message)
+                })
                 .catch((error) => {
                     console.error('Error fetching similarity:', error);
                 });
