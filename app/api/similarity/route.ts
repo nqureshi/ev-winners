@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { pipeline } from '@xenova/transformers';
 
-export async function getSentiment(query: string) {
+async function getSentiment(query: string) {
     let extractor = await pipeline('feature-extraction', 'Xenova/all-mpnet-base-v2');
     let output = await extractor(query, { pooling: 'mean', normalize: true });
 
