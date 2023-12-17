@@ -14,7 +14,7 @@ async function fetchSimilarity(query: string) {
       : '/api/similarity?query=';
   
     try {
-      const response = await fetch((API_URL + query));
+      const response = await fetch((API_URL + query), { cache: 'no-store' });
       const data = await response.json();
       // console.log(data); // Log the response
       return data;
