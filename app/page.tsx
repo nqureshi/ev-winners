@@ -16,6 +16,7 @@ import Footer from "./footer"
 const path = require('path');
 
 // this fetches the embedding for any semantic search query from api/similarity
+/*
 async function fetchSimilarity(query: string) {
   const API_URL = process.env.NODE_ENV === 'development'
     ? 'http://localhost:3000/api/similarity?query='
@@ -30,7 +31,7 @@ async function fetchSimilarity(query: string) {
     console.error('Error:', error);
     return null;
   }
-}
+}*/
 
 export default async function Page({
   searchParams,
@@ -49,11 +50,12 @@ export default async function Page({
   let effectiveData = data;
 
   // if a semantic search query is entered, compute cosine similarity + return top 20 matches
+  /*
   if (query.trim() !== '') {
     const getSimilarity = await fetchSimilarity(query);
     const newData = await getSortedData(data, getSimilarity.message);
     effectiveData = newData;
-  }
+  }*/
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white">

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Badge, badgeVariants } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 async function fetchSimilarity(query: string) {
     const API_URL = process.env.NODE_ENV === 'development'
@@ -24,7 +24,8 @@ async function fetchSimilarity(query: string) {
   }
 
 export default function SearchBar() {
-    const [search, setSearch] = useState('');
+    const [query, setQuery] = useState('')
+    const [embedding, setEmbedding] = useState('');
 
     const BADGES = [
         'Progress studies', 'Climate change', 'AI', 'Career development', 'Podcasts', 'Blogs and Substacks', 'Biotech',
@@ -43,11 +44,15 @@ export default function SearchBar() {
         } else {
             params.delete('query');
         }
-        const search = params.get('query') || '';
-        let embedding = fetchSimilarity(search).
-            then((res) => setSearch(res.message));
         replace(`${pathname}?${params.toString()}`);
+        setQuery(params.toString());
     }
+
+    useEffect(() => {
+        let e = fetchSimilarity(query).
+            then((res) => setEmbedding(res.message));
+        setEmbedding(e);
+    });
 
     return (
         <>
@@ -59,7 +64,7 @@ export default function SearchBar() {
                 You can search for something very specific like &ldquo;Ukraine&rdquo; or &ldquo;career development&rdquo;, or something very broad like
                 &ldquo;books&rdquo; or &ldquo;podcasts&rdquo;. Here are a few starting places:
             </p>
-            <p>Your embedding: {search}</p>
+            <p>Your embedding: {embedding}</p>
             <div className="flex flex-wrap gap-2 mb-4">
                 {BADGES.map((badgeText) => (
                     <button
