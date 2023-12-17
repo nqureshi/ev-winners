@@ -15,32 +15,16 @@ import Footer from "./footer"
 
 const path = require('path');
 
-// this fetches the embedding for any semantic search query from api/similarity
-/*
-async function fetchSimilarity(query: string) {
-  const API_URL = process.env.NODE_ENV === 'development'
-    ? 'http://localhost:3000/api/similarity?query='
-    : '/api/similarity?query=';
-
-  try {
-    const response = await fetch((API_URL + query), { cache: 'no-store' });
-    const data = await response.json();
-    // console.log(data); // Log the response
-    return data;
-  } catch (error) {
-    console.error('Error:', error);
-    return null;
-  }
-}*/
-
 export default async function Page({
   searchParams,
 }: {
   searchParams?: {
     query?: string;
+    //embedding?: number[];
   };
 }) {
   const query = searchParams?.query || '';
+  // const embedding = searchParams?.embedding;
 
   // get full dataset to render in Table, this is rendered on first load
   const file = await fs.readFile(path.resolve(process.cwd() + '/app/data/ev-winners-with-embeddings.json'), 'utf8');
@@ -52,8 +36,7 @@ export default async function Page({
   // if a semantic search query is entered, compute cosine similarity + return top 20 matches
   /*
   if (query.trim() !== '') {
-    const getSimilarity = await fetchSimilarity(query);
-    const newData = await getSortedData(data, getSimilarity.message);
+    const newData = await getSortedData(data, embedding);
     effectiveData = newData;
   }*/
 

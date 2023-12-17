@@ -46,23 +46,22 @@ export default function SearchBar() {
         }
         replace(`${pathname}?${params.toString()}`);
     }
-    
+
     useEffect(() => {
         const params = new URLSearchParams(searchParams);
         const q = params.get('query') || '';
-
-        if (q !== query) {
-            setQuery(q);
-
-            if (q !== '') {
-                fetchSimilarity(q)
-                    .then((res) => setEmbedding(res.message))
-                    .catch((error) => {
-                        console.error('Error fetching similarity:', error);
-                    });
-            }
+        setQuery(q);
+    }, [searchParams]);
+    
+    useEffect(() => {
+        if (query !== '') {
+            fetchSimilarity(query)
+                .then((res) => setEmbedding(res.message))
+                .catch((error) => {
+                    console.error('Error fetching similarity:', error);
+                });
         }
-    }, [searchParams, query]);
+    }, [query]);
 
     return (
         <>
@@ -88,7 +87,9 @@ export default function SearchBar() {
                 ))}
             </div >
             <div>
-                <form onSubmit={() => handleSearch} className="flex">
+                <form onSubmit={(event) => {
+                    handleSearch((event.target as any)[0].value)
+                }} className="flex">
                     <Input
                         className="flex-1 mr-2"
                         placeholder="Search projects, ideas, or fun things..."
