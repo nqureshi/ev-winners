@@ -46,6 +46,7 @@ export default function SearchBar() {
         }
         replace(`${pathname}?${params.toString()}`);
     }
+    
     useEffect(() => {
         const params = new URLSearchParams(searchParams);
         const q = params.get('query') || '';
@@ -74,7 +75,7 @@ export default function SearchBar() {
                 &ldquo;books&rdquo; or &ldquo;podcasts&rdquo;. Here are a few starting places:
             </p>
             <p>Your query: {query}</p>
-            <p>Your embedding: {embedding}</p>
+            <p>Your embedding: {embedding[0]}</p>
             <div className="flex flex-wrap gap-2 mb-4">
                 {BADGES.map((badgeText) => (
                     <button
