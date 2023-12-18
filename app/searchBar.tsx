@@ -18,7 +18,7 @@ export default function SearchBar() {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { push } = useRouter();
-    const params = useMemo(() => new URLSearchParams(searchParams), [searchParams]);
+    const params = new URLSearchParams(searchParams);
 
     function handleSearch(term: string) {
         if (term) {
