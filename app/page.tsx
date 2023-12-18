@@ -35,11 +35,9 @@ export default async function Page() {
           </Link>
         </div>
       </div>
-      <Suspense>
       <div>
         <Container data={data} />
       </div>
-      </Suspense>
       <div id="footer" className="text-gray-500 mt-4 w-4/5">
         <Footer />
       </div>
