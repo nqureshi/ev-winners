@@ -21,6 +21,8 @@ export default function SearchBar() {
     const { push } = useRouter();
     const params = new URLSearchParams(searchParams);
 
+    const [searchTerm, setSearchTerm] = useState(searchParams.get('query') || '');
+
     function handleSearch(term: string) {
         if (term) {
             params.set('query', term);
@@ -28,6 +30,7 @@ export default function SearchBar() {
             params.delete('query');
         }
         push(`${pathname}?${params.toString()}`);
+        setSearchTerm(term)
     }
 
     return (
@@ -54,13 +57,14 @@ export default function SearchBar() {
             <div>
                 <form onSubmit={(event) => {
                     event.preventDefault;
-                    handleSearch((event.target as any)[0].value)
+                    handleSearch(searchTerm);
                 }} className="flex">
                     <Input
                         className="flex-1 mr-2"
                         placeholder="Search projects, ideas, or fun things..."
                         name="query"
-                        defaultValue={searchParams.get('query')?.toString()}
+                        value={searchTerm}
+                        onChange={(event) => setSearchTerm(event.target.value)}
                     />
                     <Button type="submit">Search</Button>
                 </form>
