@@ -89,8 +89,8 @@ export default function WinnersTable<TData, TValue>({
                         </SelectContent>
                     </Select>
                 </div>
-                <div className="text-gray-500 text-sm mr-2">
-                    {query !== '' && `Showing results for "${query}"`}
+                <div className="mb-4 text-gray-500 text-sm mr-2">
+                    {query !== '' && `Showing top 20 results for "${query}" by similarity`}
                 </div>
             </div>
             <div className="rounded-md border">
