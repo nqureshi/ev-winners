@@ -8,12 +8,13 @@ import { Button } from "@/components/ui/button"
 import { useState, useEffect, useMemo } from "react"
 import { QrCode } from 'lucide-react';
 
+export const BADGES = [
+    'Progress studies', 'Climate change', 'AI', 'Career development', 'Podcasts', 'Blogs and Substacks', 'Biotech',
+    'Space', 'Mental health', 'Education', 'Cities', 'Robotics', 'Economics', 'Virtual reality',
+    'Startups', 'Venture capital'
+]
+
 export default function SearchBar() {
-    const BADGES = [
-        'Progress studies', 'Climate change', 'AI', 'Career development', 'Podcasts', 'Blogs and Substacks', 'Biotech',
-        'Space', 'Mental health', 'Education', 'Cities', 'Robotics', 'Economics', 'Virtual reality',
-        'Startups', 'Venture capital'
-    ]
 
     const searchParams = useSearchParams();
     const pathname = usePathname();

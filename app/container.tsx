@@ -58,7 +58,7 @@ export default function Container({ data }: any) {
                 <SearchBar />
             </div>
             <p>The embedding is {embedding[0]}</p>
-            <Progress value={33} /> 
+            {/*<Progress value={33} />*/}
             <Suspense fallback={<p>Loading...</p>}>
                 <div>
                     <WinnersTable columns={columns} data={renderedData} />
