@@ -51,6 +51,7 @@ export default function Container({ data }: any) {
         }
     }, [params]);
 
+    // loading progress bar animation
     useEffect(() => {
       let timer: NodeJS.Timeout | undefined;
       if (loading) {
@@ -61,7 +62,7 @@ export default function Container({ data }: any) {
             }
             return oldProgress + 10; // Increment progress
           });
-        }, 500);
+        }, 5);
       } else {
         clearInterval(timer); // Clear interval when loading is set to false externally
       }
