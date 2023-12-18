@@ -49,9 +49,6 @@ export default function WinnersTable<TData, TValue>({
     return (
         <>
             <div className="flex items-center justify-between">
-                <div className="text-gray-500 text-sm mr-2">
-                    {query !== '' && `Showing results for "${query}"`}
-                </div>
                 <div className="flex items-center mb-4 w-1/4">
                     <Input
                         placeholder="Filter by name..."
@@ -61,6 +58,9 @@ export default function WinnersTable<TData, TValue>({
                         }
                         className="max-w-sm"
                     />
+                </div>
+                <div className="text-gray-500 text-sm mr-2">
+                    {query !== '' && `Showing results for "${query}"`}
                 </div>
             </div>
             <div className="rounded-md border">
