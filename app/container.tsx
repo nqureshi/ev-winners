@@ -62,7 +62,7 @@ export default function Container({ data }: any) {
             }
             return oldProgress + 10; // Increment progress
           });
-        }, 5);
+        }, 50);
       } else {
         clearInterval(timer); // Clear interval when loading is set to false externally
       }
