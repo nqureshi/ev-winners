@@ -52,6 +52,7 @@ export default function SearchBar() {
             </div >
             <div>
                 <form onSubmit={(event) => {
+                    event.preventDefault;
                     handleSearch((event.target as any)[0].value)
                 }} className="flex">
                     <Input
