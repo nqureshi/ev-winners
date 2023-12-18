@@ -33,7 +33,7 @@ export default function Container({ data }: any) {
     const [renderedData, setRenderedData] = useState(data);
     const [query, setQuery] = useState('');
     const [loading, setLoading] = useState(false);
-    const [progress, setProgress] = useState(13); 
+    const [progress, setProgress] = useState(10); 
     
     // fetch the query embedding when a search is submitted
     useEffect(() => {
