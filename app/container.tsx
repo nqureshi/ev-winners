@@ -3,7 +3,7 @@
 import SearchBar from "./searchBar"
 import WinnersTable from "./winnersTable"
 import { Winner, columns } from "./columns"
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, Suspense } from "react"
 import { getSortedData } from './utils/getSortedData'
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
@@ -58,7 +58,7 @@ export default function Container({ data }: any) {
             <div>
                 <WinnersTable columns={columns} data={data} />
             </div>
-            </Suspense>
+            </Suspense>npm
         </>
     )
 }
