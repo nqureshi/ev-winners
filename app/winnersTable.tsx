@@ -57,6 +57,33 @@ export default function WinnersTable<TData, TValue>({
         location.replace(`${pathname}?query=`);
     };
 
+// Helper function to check if a string is numeric
+function isNumeric(str: any) {
+    return !isNaN(str) && !isNaN(parseFloat(str));
+}
+
+// For sorting cohorts
+function customSort(a: any, b: any) {
+    const isANumeric = isNumeric(a);
+    const isBNumeric = isNumeric(b);
+
+    if (isANumeric && isBNumeric) {
+        return parseInt(a) - parseInt(b);
+    }
+
+    else if (isANumeric) {
+        return -1;
+    }
+
+    else if (isBNumeric) {
+        return 1;
+    }
+
+    else {
+        return a.localeCompare(b);
+    }
+}
+
     return (
         <>
             <div className="flex items-center justify-start">
@@ -88,7 +115,7 @@ export default function WinnersTable<TData, TValue>({
                         <SelectItem key="clear_option" value="CLEAR_SELECTION">
                             All cohorts
                         </SelectItem>
-                        {batchOptions.map((option) => (
+                        {batchOptions.sort(customSort).map((option) => (
                             <SelectItem key={option} value={option}>{option}</SelectItem>
                         ))}
                         </SelectContent>
