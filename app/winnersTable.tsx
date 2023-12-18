@@ -97,7 +97,7 @@ export default function WinnersTable<TData, TValue>({
                 <div className="mb-4 text-gray-500 text-sm mr-2">
                     {query !== '' && (
                         <>
-                            Showing top 20 results for "{query}" by similarity.
+                            Showing top 20 results for &ldquo;{query}&rdquo; by similarity.
                             <span className="underline cursor-pointer ml-2" onClick={handleClearSearch}>
                                 Click to clear search.
                             </span>
