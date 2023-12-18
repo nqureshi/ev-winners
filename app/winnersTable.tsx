@@ -46,10 +46,16 @@ export default function WinnersTable<TData, TValue>({
         },
     })
 
+    const getBatchOptions = () => {
+        return Array.from(new Set(data.map((winner: any) => winner.batch)));
+    };
+    
+    const batchOptions = getBatchOptions();
+
     return (
         <>
-            <div className="flex items-center justify-between">
-                <div className="flex items-center mb-4 w-1/4">
+            <div className="flex items-center justify-start">
+                <div className="mb-4 w-1/4 mr-8">
                     <Input
                         placeholder="Filter by name..."
                         value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -58,6 +64,30 @@ export default function WinnersTable<TData, TValue>({
                         }
                         className="max-w-sm"
                     />
+                </div>
+                <div className="mb-4 w-1/4 mr-8">
+                    <Select
+                        onValueChange={(value) => {
+                            if (value === "CLEAR_SELECTION") {
+                                table.getColumn("batch")?.setFilterValue("");
+                            } else {
+                                table.getColumn("batch")?.setFilterValue(value);
+                            }
+                        }}
+                        defaultValue={(table.getColumn("batch")?.getFilterValue() as string) ?? ""}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Choose cohort..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                        <SelectItem key="clear_option" value="CLEAR_SELECTION">
+                            All cohorts
+                        </SelectItem>
+                        {batchOptions.map((option) => (
+                            <SelectItem key={option} value={option}>{option}</SelectItem>
+                        ))}
+                        </SelectContent>
+                    </Select>
                 </div>
                 <div className="text-gray-500 text-sm mr-2">
                     {query !== '' && `Showing results for "${query}"`}
