@@ -7,7 +7,14 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Emergent Ventures Winners',
-  description: 'Emergent Ventures is a fellowship and grant program founded by Tyler Cowen, economist and author of the blog Marginal Revolution, from the Mercatus Center at GMU. It funds moonshots and highly ambitious ideas to improve society. This site collects all winners in one place. You can also find a CSV by clicking the Github link on the top right.',
+  description: 'Semantic search for all Emergent Ventures winners.',
+  twitter: {
+    card: "summary_large_image",
+    title: "Emergent Ventures Winners",
+    description: "Semantic search for all Emergent Ventures winners.",
+    creator: "@nabeelqu",
+    images: ["https://www.mercatus.org/themes/custom/mercatus/images/mercatus-social-media.png"],
+  }
 }
 
 export default function RootLayout({
