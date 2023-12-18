@@ -63,7 +63,7 @@ export default function Container({ data }: any) {
             <div className="bg-[#00c79f] p-4 rounded-lg mb-6 text-black">
                 <SearchBar />
             </div>
-            {loading && <Progress value="66" className="w-[60%]" />}
+            {loading && <Progress value={66} className="w-[60%]" />}
             <Suspense fallback={<p>Loading...</p>}>
                 <div>
                     <WinnersTable columns={columns} data={renderedData} query={query} />
