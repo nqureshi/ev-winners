@@ -28,25 +28,28 @@ export default function Container({ data }: any) {
     const params = useMemo(() => new URLSearchParams(searchParams), [searchParams]);
     const arr: number[] = []
     const [embedding, setEmbedding] = useState(arr)
+    const [renderedData, setRenderedData] = useState(data);
     
+    // fetch the query embedding when a search is submitted
     useEffect(() => {
         const q = params.get('query') || '';
-        // console.log(q)
         if (q !== '') {
             fetchSimilarity(q)
                 .then((res) => {
-                    setEmbedding(res.message)
+                    setEmbedding(res.message);
                 })
                 .catch((error) => {
                     console.error('Error fetching similarity:', error);
                 });
         }
     }, [params]);
-    /*
-    if (query.trim() !== '') {
-        const newData = await getSortedData(data, embedding);
-        effectiveData = newData;
-    }*/
+
+    // once query embedding is fetched, re-render data in the table
+    useEffect(() => {
+        if (embedding.length > 0) {
+            setRenderedData(getSortedData(data, embedding));
+        }
+    }, [embedding, data]);
 
     return(
         <>
@@ -55,7 +58,7 @@ export default function Container({ data }: any) {
             </div>
             <p>The embedding is {embedding[0]}</p>
             <div>
-                <WinnersTable columns={columns} data={data} />
+                <WinnersTable columns={columns} data={renderedData} />
             </div>
         </>
     )
