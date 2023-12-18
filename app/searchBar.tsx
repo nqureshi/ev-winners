@@ -42,7 +42,7 @@ export default function SearchBar({ setLoadingTrue }: SearchBarProps) {
         <>
             <h2 className="font-semibold mb-2">Semantic search over every Emergent Ventures winner</h2>
             <p className="mb-4 text-sm">
-                <a className="underline" href="https://www.mercatus.org/emergent-ventures">Emergent Ventures</a> is a fellowship and grant program run by <a className="underline" href="https://en.wikipedia.org/wiki/Tyler_Cowen">Tyler Cowen</a>, economist and author of the blog Marginal Revolution,
+                <a className="underline" href="https://www.mercatus.org/emergent-ventures">Emergent Ventures</a> is a fellowship and grant program founded by <a className="underline" href="https://en.wikipedia.org/wiki/Tyler_Cowen">Tyler Cowen</a>, economist and author of the blog Marginal Revolution,
                 from the Mercatus Center at GMU. It funds moonshots and highly ambitious ideas to improve society.
             </p>
             <p className="mb-4 text-sm">

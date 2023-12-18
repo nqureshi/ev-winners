@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { pipeline } from '@xenova/transformers';
 
 async function getSentiment(query: string) {
-    let extractor = await pipeline('feature-extraction', 'Xenova/all-mpnet-base-v2');
+    let extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
     let output = await extractor(query, { pooling: 'mean', normalize: true });
 
     return Array.from(output.data)
