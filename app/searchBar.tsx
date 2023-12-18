@@ -14,7 +14,11 @@ export const BADGES = [
     'Startups', 'Venture capital'
 ]
 
-export default function SearchBar() {
+interface SearchBarProps {
+    setLoadingTrue: () => void;
+}
+
+export default function SearchBar({ setLoadingTrue }: SearchBarProps) {
 
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -30,7 +34,8 @@ export default function SearchBar() {
             params.delete('query');
         }
         push(`${pathname}?${params.toString()}`);
-        setSearchTerm(term)
+        setSearchTerm(term);
+        setLoadingTrue();
     }
 
     return (

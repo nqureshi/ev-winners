@@ -32,6 +32,10 @@ export default function Container({ data }: any) {
     const [renderedData, setRenderedData] = useState(data);
     const [query, setQuery] = useState('');
     const [loading, setLoading] = useState(false);
+
+    const setLoadingTrue = () => {
+        setLoading(true);
+    }
     
     // fetch the query embedding when a search is submitted
     useEffect(() => {
@@ -60,7 +64,7 @@ export default function Container({ data }: any) {
     return(
         <>
             <div className="bg-[#00c79f] p-4 rounded-lg mb-6 text-black">
-                <SearchBar />
+                <SearchBar setLoadingTrue={setLoadingTrue} />
             </div>
             {loading && 
               <div role="status">
