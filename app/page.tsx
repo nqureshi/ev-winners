@@ -30,8 +30,11 @@ export default async function Page() {
           <Link href="#footer" className="text-blue-600">
             about
           </Link>
-          <Link className="text-blue-600" href="#">
+          <Link className="text-blue-600" href="https://github.com/nqureshi/ev-winners">
             github
+          </Link>
+          <Link className="text-blue-600" href="https://github.com/nqureshi/ev-search-python/blob/main/data/ev-winners.csv">
+            data
           </Link>
         </div>
       </div>

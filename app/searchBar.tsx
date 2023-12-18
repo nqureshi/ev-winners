@@ -42,11 +42,15 @@ export default function SearchBar({ setLoadingTrue }: SearchBarProps) {
         <>
             <h2 className="font-semibold mb-2">Semantic search over every Emergent Ventures winner</h2>
             <p className="mb-4 text-sm">
-                This site uses semantic similarity to search all Emergent Ventures grantees. This search bar doesn&lsquo;t need you to get the keywords exactly right, only close enough, to find them.
+                <a className="underline" href="https://www.mercatus.org/emergent-ventures">Emergent Ventures</a> is a fellowship and grant program run by <a className="underline" href="https://en.wikipedia.org/wiki/Tyler_Cowen">Tyler Cowen</a>, economist and author of the blog Marginal Revolution,
+                from the Mercatus Center at GMU. It funds moonshots and highly ambitious ideas to improve society.
             </p>
             <p className="mb-4 text-sm">
-                You can search for something very specific like &ldquo;Ukraine&rdquo; or &ldquo;career development&rdquo;, or something very broad like
-                &ldquo;books&rdquo; or &ldquo;podcasts&rdquo;. Here are a few starting places:
+                This site collects all winners in one place. You can also find a CSV by clicking the Github link on the top right.
+            </p>
+            <p className="mb-4 text-sm">
+                This search bar doesn&lsquo;t need you to get the keywords exactly right; it uses a technique from machine learning called embeddings to find close enough matches.
+                Here are a few starting suggestions for you:
             </p>
             <div className="flex flex-wrap gap-2 mb-4">
                 {BADGES.map((badgeText) => (
