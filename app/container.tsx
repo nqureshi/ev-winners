@@ -31,7 +31,7 @@ export default function Container({ data }: any) {
     
     useEffect(() => {
         const q = params.get('query') || '';
-        console.log(q)
+        // console.log(q)
         if (q !== '') {
             fetchSimilarity(q)
                 .then((res) => {
@@ -54,11 +54,9 @@ export default function Container({ data }: any) {
                 <SearchBar />
             </div>
             <p>The embedding is {embedding[0]}</p>
-            <Suspense>
             <div>
                 <WinnersTable columns={columns} data={data} />
             </div>
-            </Suspense>npm
         </>
     )
 }
