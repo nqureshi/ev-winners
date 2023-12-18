@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
+import { usePathname } from "next/navigation"
 
 interface WinnersTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -51,6 +52,10 @@ export default function WinnersTable<TData, TValue>({
     };
     
     const batchOptions = getBatchOptions();
+    const pathname = usePathname();
+    const handleClearSearch = () => {
+        location.replace(`${pathname}?query=`);
+    };
 
     return (
         <>
@@ -90,7 +95,14 @@ export default function WinnersTable<TData, TValue>({
                     </Select>
                 </div>
                 <div className="mb-4 text-gray-500 text-sm mr-2">
-                    {query !== '' && `Showing top 20 results for "${query}" by similarity`}
+                    {query !== '' && (
+                        <>
+                            Showing top 20 results for "{query}" by similarity.
+                            <span className="underline cursor-pointer ml-2" onClick={handleClearSearch}>
+                                Click to clear search.
+                            </span>
+                        </>
+                    )}
                 </div>
             </div>
             <div className="rounded-md border">
