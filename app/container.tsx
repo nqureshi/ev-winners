@@ -52,20 +52,21 @@ export default function Container({ data }: any) {
     }, [params]);
 
     useEffect(() => {
-        if (loading) {
-          const timer = setTimeout(() => {
-            setProgress((oldProgress) => {
-              const newProgress = oldProgress + 30;
-              if (newProgress >= 100) {
-                setLoading(false); // Stop loading when progress reaches 100
-                return 100;
-              }
-              return newProgress;
-            });
-          }, 100);
-          return () => clearTimeout(timer);
-        }
-      }, [loading, progress]);
+      let timer: NodeJS.Timeout | undefined;
+      if (loading) {
+        timer = setInterval(() => {
+          setProgress((oldProgress) => {
+            if (oldProgress === 100) {
+              return 0; // Reset progress to 0 when it reaches 100
+            }
+            return oldProgress + 10; // Increment progress
+          });
+        }, 500);
+      } else {
+        clearInterval(timer); // Clear interval when loading is set to false externally
+      }
+      return () => clearInterval(timer); // Cleanup interval on component unmount
+    }, [loading]);  
 
     // once query embedding is fetched, re-render data in the table
     useEffect(() => {
