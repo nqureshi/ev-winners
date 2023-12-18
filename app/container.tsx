@@ -4,7 +4,7 @@ import SearchBar from "./searchBar"
 import WinnersTable from "./winnersTable"
 import { Winner, columns } from "./columns"
 
-export default function Container({ data }: Winner[]) {
+export default function Container({ data }: any) {
     return(
         <>
             <div className="bg-[#00c79f] p-4 rounded-lg mb-6 text-black">
