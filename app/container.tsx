@@ -6,6 +6,7 @@ import { Winner, columns } from "./columns"
 import { useState, useEffect, useMemo, Suspense } from "react"
 import { getSortedData } from './utils/getSortedData'
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import { Progress } from "@/components/ui/progress"
 
 async function fetchSimilarity(query: string) {
     const API_URL = process.env.NODE_ENV === 'development'
@@ -57,9 +58,12 @@ export default function Container({ data }: any) {
                 <SearchBar />
             </div>
             <p>The embedding is {embedding[0]}</p>
-            <div>
-                <WinnersTable columns={columns} data={renderedData} />
-            </div>
+            <Progress value={33} /> 
+            <Suspense fallback={<p>Loading...</p>}>
+                <div>
+                    <WinnersTable columns={columns} data={renderedData} />
+                </div>
+            </Suspense>
         </>
     )
 }
