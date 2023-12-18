@@ -18,6 +18,14 @@ export type Winner = {
     embedding_description: number[];
 };
 
+// Utility function to ensure the link has 'https://' prefix
+const formatLink = (link: string | null) => {
+    if (link && !link.startsWith('http://') && !link.startsWith('https://')) {
+        return `https://${link}`;
+    }
+    return link;
+};
+
 export const columns: ColumnDef<Winner>[] = [
     {
         accessorKey: "name",
@@ -28,7 +36,15 @@ export const columns: ColumnDef<Winner>[] = [
         header: "Cohort",
     },
     {
+        accessorKey: "link",
+        header: "Link",
+        cell: (cell) => {
+            const link = formatLink(cell.row.original.link);
+            return link ? <a className="underline" href={link} target="_blank" rel="noopener noreferrer">Link</a> : null;
+        },
+    },
+    {
         accessorKey: "description",
         header: "Description",
-    }
+    },
 ];
