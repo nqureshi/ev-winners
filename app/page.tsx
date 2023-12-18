@@ -3,6 +3,7 @@ import Link from "next/link"
 
 import { Suspense } from 'react'
 
+// UI COMPONENTS
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@/components/ui/select"
@@ -10,10 +11,11 @@ import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@
 import { promises as fs } from 'fs';
 import { Winner, columns } from "./columns"
 
-import SearchBar from "./searchBar"
-import WinnersTable from "./winnersTable"
 import { getSortedData } from './utils/getSortedData'
+
+// COMPONENTS
 import Footer from "./footer"
+import Container from "./container"
 
 const path = require('path');
 
@@ -54,13 +56,10 @@ export default async function Page({
         </div>
       </div>
       <Suspense>
-        <div className="bg-[#00c79f] p-4 rounded-lg mb-6 text-black">
-          <SearchBar />
-        </div>
-      </Suspense>
       <div>
-        <WinnersTable columns={columns} data={effectiveData} />
+        <Container data={effectiveData} />
       </div>
+      </Suspense>
       <div id="footer" className="text-gray-500 mt-4 w-4/5">
         <Footer />
       </div>
