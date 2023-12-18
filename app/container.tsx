@@ -30,11 +30,13 @@ export default function Container({ data }: any) {
     const arr: number[] = []
     const [embedding, setEmbedding] = useState(arr)
     const [renderedData, setRenderedData] = useState(data);
+    const [query, setQuery] = useState('');
     
     // fetch the query embedding when a search is submitted
     useEffect(() => {
         const q = params.get('query') || '';
         if (q !== '') {
+            setQuery(q)
             fetchSimilarity(q)
                 .then((res) => {
                     setEmbedding(res.message);
@@ -57,11 +59,9 @@ export default function Container({ data }: any) {
             <div className="bg-[#00c79f] p-4 rounded-lg mb-6 text-black">
                 <SearchBar />
             </div>
-            <p>The embedding is {embedding[0]}</p>
-            {/*<Progress value={33} />*/}
             <Suspense fallback={<p>Loading...</p>}>
                 <div>
-                    <WinnersTable columns={columns} data={renderedData} />
+                    <WinnersTable columns={columns} data={renderedData} query={query} />
                 </div>
             </Suspense>
         </>

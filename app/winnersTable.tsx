@@ -22,12 +22,14 @@ import { useState } from "react"
 interface WinnersTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    query: string
 }
 
 
 export default function WinnersTable<TData, TValue>({
     columns,
     data,
+    query,
 }: WinnersTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
         []
@@ -46,15 +48,20 @@ export default function WinnersTable<TData, TValue>({
 
     return (
         <>
-            <div className="flex items-center mb-4 w-1/4">
-                <Input
-                    placeholder="Filter by name..."
-                    value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn("name")?.setFilterValue(event.target.value)
-                    }
-                    className="max-w-sm"
-                />
+            <div className="flex items-center justify-between">
+                <div className="text-gray-500 text-sm mr-2">
+                    {query !== '' && `Showing results for "${query}"`}
+                </div>
+                <div className="flex items-center mb-4 w-1/4">
+                    <Input
+                        placeholder="Filter by name..."
+                        value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                        onChange={(event) =>
+                            table.getColumn("name")?.setFilterValue(event.target.value)
+                        }
+                        className="max-w-sm"
+                    />
+                </div>
             </div>
             <div className="rounded-md border">
                 <Table>
