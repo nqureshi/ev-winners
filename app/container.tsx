@@ -37,29 +37,27 @@ export default function Container({ data }: any) {
         setLoading(true);
     }
     
-    // fetch the query embedding when a search is submitted
     useEffect(() => {
         const q = params.get('query') || '';
         if (q !== '') {
             setLoading(true);
-            setQuery(q)
+            setQuery(q);
+    
+            // Fetch similarity and then update data
             fetchSimilarity(q)
                 .then((res) => {
                     setEmbedding(res.message);
+    
+                    // Once embedding is available, sort and set data
+                    setRenderedData(getSortedData(data, res.message));
+                    setLoading(false);
                 })
                 .catch((error) => {
                     console.error('Error fetching similarity:', error);
                 });
         }
-    }, [params]);
-
-    // once query embedding is fetched, re-render data in the table
-    useEffect(() => {
-        if (embedding.length > 0) {
-            setRenderedData(getSortedData(data, embedding));
-            setLoading(false);
-        }
-    }, [embedding, data]);
+    }, [params, data]); // dependencies
+    
 
     return(
         <>
