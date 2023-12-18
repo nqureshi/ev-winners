@@ -48,6 +48,7 @@ export default function Container({ data }: any) {
                 });
         }
     }, [params]);
+
     // once query embedding is fetched, re-render data in the table
     useEffect(() => {
         if (embedding.length > 0) {
@@ -72,7 +73,7 @@ export default function Container({ data }: any) {
             }
             <Suspense fallback={<p>Loading...</p>}>
                 <div>
-                    <WinnersTable columns={columns} data={renderedData} query={query} />
+                    { !loading && <WinnersTable columns={columns} data={renderedData} query={query} /> }
                 </div>
             </Suspense>
         </>
