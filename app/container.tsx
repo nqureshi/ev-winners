@@ -28,14 +28,17 @@ export default function Container({ data }: any) {
     const searchParams = useSearchParams();
     const params = useMemo(() => new URLSearchParams(searchParams), [searchParams]);
     const arr: number[] = []
+    
     const [embedding, setEmbedding] = useState(arr)
     const [renderedData, setRenderedData] = useState(data);
     const [query, setQuery] = useState('');
+    const [loading, setLoading] = useState(false);
     
     // fetch the query embedding when a search is submitted
     useEffect(() => {
         const q = params.get('query') || '';
         if (q !== '') {
+            setLoading(true);
             setQuery(q)
             fetchSimilarity(q)
                 .then((res) => {
@@ -51,6 +54,7 @@ export default function Container({ data }: any) {
     useEffect(() => {
         if (embedding.length > 0) {
             setRenderedData(getSortedData(data, embedding));
+            setLoading(false);
         }
     }, [embedding, data]);
 
@@ -59,6 +63,7 @@ export default function Container({ data }: any) {
             <div className="bg-[#00c79f] p-4 rounded-lg mb-6 text-black">
                 <SearchBar />
             </div>
+            {loading && <Progress value="66" className="w-[60%]" />}
             <Suspense fallback={<p>Loading...</p>}>
                 <div>
                     <WinnersTable columns={columns} data={renderedData} query={query} />
