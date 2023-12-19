@@ -1,4 +1,4 @@
-# Semantic Search for Emergent Ventures Winners 🌍
+# Emergent Ventures Winners 🌍
 
 [Emergent Ventures Winners](https://evwinners.org) is a website collecting all the grantees of [Emergent Ventures](https://www.mercatus.org/emergent-ventures), initiated by economist and author [Tyler Cowen](https://en.wikipedia.org/wiki/Tyler_Cowen) at the Mercatus Center of George Mason University; it's a fellowship and grant program designed to support ambitious ideas and moonshots aimed at improving society. I collected all the winners and the links to their announcements posts in one place, and this is the repo for it.
 
