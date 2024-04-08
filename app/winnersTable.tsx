@@ -89,7 +89,7 @@ function customSort(a: any, b: any) {
             <div className="flex items-center justify-start">
                 <div className="mb-4 w-1/4 mr-8">
                     <Input
-                        placeholder="Filter by name..."
+                        placeholder="Search by name..."
                         value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
                         onChange={(event) =>
                             table.getColumn("name")?.setFilterValue(event.target.value)
