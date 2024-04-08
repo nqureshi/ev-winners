@@ -70,7 +70,7 @@ export default function SearchBar({ setLoadingTrue }: SearchBarProps) {
                 }} className="flex">
                     <Input
                         className="flex-1 mr-2"
-                        placeholder="Search projects, ideas, or fun things..."
+                        placeholder="Search project descriptions..."
                         name="query"
                         value={searchTerm}
                         onChange={(event) => setSearchTerm(event.target.value)}

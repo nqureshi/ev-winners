@@ -12,7 +12,6 @@ The semantic search function is powered by transformers.js and sentence-transfor
 
 ## Metadata
 
-- **Last Updated**: December 2023, covering up to cohort #30.
 - **Contribute**: Feel free to submit an issue to the repo if you see any missing data or want any features.
 - **Raw data**: You can find the raw data in CSV format here: [https://github.com/nqureshi/ev-search-python/tree/main/data](https://github.com/nqureshi/ev-search-python/tree/main/data).
 
