@@ -3,7 +3,7 @@
 import SearchBar from "./searchBar"
 import WinnersTable from "./winnersTable"
 import { Winner, columns } from "./columns"
-import { useState, useEffect, useMemo, Suspense } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { getSortedData } from './utils/getSortedData'
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
@@ -73,11 +73,9 @@ export default function Container({ data }: any) {
                   <span className="sr-only">Loading...</span>
               </div>
             }
-            <Suspense fallback={<p>Loading...</p>}>
-                <div>
-                    { !loading && <WinnersTable columns={columns} data={renderedData} query={query} /> }
-                </div>
-            </Suspense>
+            <div>
+                { !loading && <WinnersTable columns={columns} data={renderedData} query={query} /> }
+            </div>
         </>
     )
 }

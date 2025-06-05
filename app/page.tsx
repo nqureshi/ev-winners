@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import Link from "next/link"
 
-import { Suspense } from 'react'
 
 // UI COMPONENTS
 import { Input } from "@/components/ui/input"
