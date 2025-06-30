@@ -25,7 +25,11 @@ const getFormattedPersonalLinks = (links: string | null) => {
     return null;
   }
 
-  return links.trim().split(/\s+/).map(link => formatLink(link));
+  return links
+    .trim()
+    .split(/\s+/)
+    .filter(link => link.includes("."))
+    .map(link => formatLink(link));
 };
 
 // Utility function to ensure the link has 'https://' prefix
