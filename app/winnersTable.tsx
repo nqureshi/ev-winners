@@ -86,8 +86,8 @@ function customSort(a: any, b: any) {
 
     return (
         <>
-            <div className="flex items-center justify-start">
-                <div className="mb-4 w-1/4 mr-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start">
+                <div className="mb-4 w-full sm:w-1/4 mr-0 sm:mr-8">
                     <Input
                         placeholder="Search by name..."
                         value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -97,7 +97,7 @@ function customSort(a: any, b: any) {
                         className="max-w-sm"
                     />
                 </div>
-                <div className="mb-4 w-1/4 mr-8">
+                <div className="mb-4 w-full sm:w-1/4 mr-0 sm:mr-8">
                     <Select
                         onValueChange={(value) => {
                             if (value === "CLEAR_SELECTION") {
