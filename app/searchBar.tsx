@@ -65,7 +65,7 @@ export default function SearchBar({ setLoadingTrue }: SearchBarProps) {
             </div >
             <div>
                 <form onSubmit={(event) => {
-                    event.preventDefault;
+                    event.preventDefault();
                     handleSearch(searchTerm);
                 }} className="flex">
                     <Input
