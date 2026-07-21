@@ -18,6 +18,20 @@ export type Winner = {
     embedding_description: number[];
 };
 
+// Parses the user-entered personal links to a string and returns 
+// an array of valid URLs. If none, returns null
+const getFormattedPersonalLinks = (links: string | null) => {
+  if (!links || links == "" || links === " " || links === "-") {
+    return null;
+  }
+
+  return links
+    .trim()
+    .split(/\s+/)
+    .filter(link => link.includes("."))
+    .map(link => formatLink(link));
+};
+
 // Utility function to ensure the link has 'https://' prefix
 const formatLink = (link: string | null) => {
     if (link && !link.startsWith('http://') && !link.startsWith('https://')) {
@@ -37,11 +51,25 @@ export const columns: ColumnDef<Winner>[] = [
     },
     {
         accessorKey: "link",
-        header: "Link",
+        header: "MR Link",
         cell: (cell) => {
             const link = formatLink(cell.row.original.link);
             return link ? <a className="underline" href={link} target="_blank" rel="noopener noreferrer">Link</a> : null;
         },
+    },
+    {
+      accessorKey: "personal_links",
+      header: "Personal Links",
+      cell: (cell) => {
+        const personalLinks = getFormattedPersonalLinks(cell.row.original.personal_links);
+
+        return personalLinks?.map((personalLink, index) => (
+          <span>
+            <a className="underline" href={personalLink} target="_blank" rel="noopener noreferrer"> {index + 1}</a>
+            {(index + 1) !== personalLinks.length ? "," : null}
+          </span>
+        ))
+      },
     },
     {
         accessorKey: "description",
