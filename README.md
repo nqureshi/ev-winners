@@ -13,7 +13,7 @@ The semantic search function is powered by transformers.js and sentence-transfor
 ## Metadata
 
 - **Contribute**: Feel free to submit an issue to the repo if you see any missing data or want any features.
-- **Raw data**: You can find the raw data in CSV format here: [https://github.com/nqureshi/ev-search-python/tree/main/data](https://github.com/nqureshi/ev-search-python/tree/main/data).
+- **Raw data**: The raw data is in CSV format at [`pipeline/data/ev-winners.csv`](pipeline/data/ev-winners.csv). See [`pipeline/README.md`](pipeline/README.md) for how the embeddings are generated and how to add a cohort.
 
 This site is an independent project and is not an official website of Emergent Ventures or Mercatus.
 
