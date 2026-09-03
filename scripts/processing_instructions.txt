@@ -1,0 +1,28 @@
+INSTRUCTIONS FOR PROCESSING EMERGENT VENTURES COHORT DATA
+
+Input Requirements:
+- URL to the cohort announcement (e.g., https://marginalrevolution.com/marginalrevolution/2024/12/emergent-ventures-39th-cohort.html)
+- Batch/cohort number (e.g., 39)
+- Date announced in YYYY-MM-DD format (e.g., 2024-12-18)
+- List of names and descriptions
+
+Processing Steps:
+- Start numbering entries from where the previous batch left off
+- Extract name and description for each person
+- Remove the person's name from the beginning of their description
+- Format data in proper CSV structure
+
+CSV Format Requirements:
+- Six columns: #, Name, Batch, Date Announced, Link, Description
+- No spaces after commas between columns
+- Description field must be enclosed in double quotes to handle internal commas
+- No trailing periods in descriptions unless they're part of the original text
+- For special cohorts (like Ukraine), add identifier at the start of the description (e.g., "ukraine cohort, ")
+
+Example CSV Row:
+545,Karine Bao,39,2024-12-18,https://marginalrevolution.com/marginalrevolution/2024/12/emergent-ventures-39th-cohort.html,"San Francisco, to translate the autobiography of Morris Chang"
+
+Error Prevention:
+- Ensure no double quotes within the description text itself
+- Verify all fields are properly separated
+- Ensure consistent formatting across all entries
