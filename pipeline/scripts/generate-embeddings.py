@@ -1,52 +1,62 @@
-import pandas as pd
-import numpy as np
+"""Regenerate description embeddings for every EV winner.
+
+Reads  pipeline/data/ev-winners.csv
+Writes app/data/ev-winners-with-embeddings.json   (the file the site serves)
+
+Paths are resolved relative to this file, so it can be run from anywhere:
+    pipeline/.venv/bin/python pipeline/scripts/generate-embeddings.py
+
+The model MUST stay in sync with the one the API route uses
+(app/api/similarity/route.ts -> Xenova/all-MiniLM-L6-v2). Changing one
+without the other silently breaks search ranking.
+"""
+import io
 import json
-from sentence_transformers import SentenceTransformer, util
+import sys
+from pathlib import Path
 
-def get_ev_winners(query, embeddings, descriptions, names):
-    query_embed = np.tile(model.encode(query), (len(embeddings), 1))
-    cos_sim = util.cos_sim(embeddings, query_embed)
+import pandas as pd
+from sentence_transformers import SentenceTransformer
 
-    all_sentence_combinations = []
-    for i in range(len(cos_sim) - 1):
-        all_sentence_combinations.append([cos_sim[i], descriptions[i], names[i]])
+MODEL_NAME = 'sentence-transformers/all-MiniLM-L6-v2'
 
-    all_sentence_combinations = sorted(all_sentence_combinations, key=lambda x: x[0][0], reverse=True)
-    return all_sentence_combinations
+PIPELINE_DIR = Path(__file__).resolve().parent.parent
+REPO_ROOT = PIPELINE_DIR.parent
+CSV_PATH = PIPELINE_DIR / 'data' / 'ev-winners.csv'
+JSON_PATH = REPO_ROOT / 'app' / 'data' / 'ev-winners-with-embeddings.json'
 
-def search_ev_winners(query, number, embeddings, descriptions, names):
-    print(f"Top {number} matches for query: {query}\n")
-    for index, item in enumerate(get_ev_winners(query, embeddings, descriptions, names)[:number], start=1):
-        print(f"{index}. {item[2]}: {item[1]}")
 
-def main():
-    model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+def main() -> int:
+    df = pd.read_csv(CSV_PATH)
+    print(f'Loaded {len(df)} winners from {CSV_PATH.relative_to(REPO_ROOT)}')
 
-    csv_file_path = 'data/ev-winners.csv'
-    df = pd.read_csv(csv_file_path)
+    missing = df['description'].isna()
+    if missing.any():
+        # Two legacy rows (ids 101, 105) have no description. validate.py
+        # allow-lists them; anything else is a data-entry error.
+        print(f'WARNING: {int(missing.sum())} rows have an empty description '
+              f'(ids: {df.loc[missing, "id"].tolist()})', file=sys.stderr)
 
-    print(df.head())
-
-    names = df['name'].to_numpy()
-    descriptions = df['description'].to_numpy()
-
-    embeddings = model.encode(descriptions)
-    print(embeddings)
-
+    model = SentenceTransformer(MODEL_NAME)
+    # astype(str) turns NaN into the text "nan", which is what the original
+    # pipeline embedded for those rows; keeping it makes output reproducible.
+    embeddings = model.encode(df['description'].astype(str).to_numpy(), show_progress_bar=True)
     df['embedding_description'] = embeddings.tolist()
 
-    output_csv_path = 'data/ev-winners-with-embeddings.csv'
-    df.to_csv(output_csv_path, index=False)
-    print(f"DataFrame with embeddings has been saved to '{output_csv_path}'")
-
-    df2 = pd.read_csv(output_csv_path)
+    # Round-trip through CSV text on purpose: it is what the original pipeline
+    # did, and it fixes the column dtypes the site expects (e.g. `batch` is a
+    # string because some cohorts are named rather than numbered).
+    buf = io.StringIO()
+    df.to_csv(buf, index=False)
+    buf.seek(0)
+    df2 = pd.read_csv(buf)
     df2['embedding_description'] = df2['embedding_description'].apply(json.loads)
-    json_blob = df2.to_json(orient='records', lines=False)
 
-    output_json_path = 'data/ev-winners-with-embeddings.json'
-    with open(output_json_path, 'w') as json_file:
-        json_file.write(json_blob)
-    print(f"JSON blob has been saved to '{output_json_path}'")
+    JSON_PATH.write_text(df2.to_json(orient='records', lines=False))
+    print(f'Wrote {len(df2)} winners with {embeddings.shape[1]}-dim embeddings to '
+          f'{JSON_PATH.relative_to(REPO_ROOT)}')
+    return 0
+
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

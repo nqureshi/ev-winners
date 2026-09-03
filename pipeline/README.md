@@ -1,42 +1,49 @@
-# Emergent Ventures Embeddings-Based Search
+# Data pipeline
 
-Emergent Ventures (https://www.mercatus.org/emergent-ventures) is a grant program run by [Tyler Cowen](https://en.wikipedia.org/wiki/Tyler_Cowen) (an economist who writes Marginal Revolution) at the Mercatus Center.
+Source data and the script that turns it into the embeddings the site serves.
 
-This repo has a CSV of all EV winners. In addition, there is a Python file (search_winners.py) that uses Sentence Transformers to generate embeddings for each of their project descriptions. This enables easy semantic search for EV-funded projects, e.g. you can search for all funding relating to writing a book, or starting a podcast, or working on climate change, for example.
+- `data/ev-winners.csv` is the source of truth for every winner. Edit this, never the JSON.
+- `scripts/generate-embeddings.py` reads the CSV and writes `../app/data/ev-winners-with-embeddings.json`.
+- `scripts/validate.py` checks the CSV and JSON agree and are well formed. Run it before committing.
+- `scripts/search_winners.py` is a command-line search for spot checks.
 
-## Setup
+The embedding model is `all-MiniLM-L6-v2` here and `Xenova/all-MiniLM-L6-v2` in
+`app/api/similarity/route.ts`. They must stay the same model.
 
-```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-## Searching
+## Setup (once)
 
 ```bash
-source venv/bin/activate
-python3 scripts/search_winners.py [query] [number-of-results]
+cd pipeline
+uv venv --python 3.11 .venv
+uv pip install --python .venv/bin/python -r requirements.txt
 ```
 
-The number-of-results argument is optional and defaults to 10.
+## Adding a cohort
 
-## Adding a new cohort
+The easy way: open Claude Code in the repo root and run `/add-cohort <marginalrevolution URL>`.
 
-1. Open `data/ev-winners.csv` and append new rows. The columns are:
+By hand:
+
+1. Append rows to `data/ev-winners.csv`. Columns:
    ```
    id,name,batch,date_announced,link,description,type,career_stage,personal_links,personal_info,mr_posts,project_links
    ```
-   - `id` continues from the last entry (check the last row)
-   - `batch` is the cohort number
+   - `id` continues from the last row
+   - `batch` is the cohort number (or a name, e.g. `India 2`, for special tranches)
+   - `date_announced` is `YYYY-MM-DD`
    - `link` is the Marginal Revolution announcement URL
-   - The remaining columns (`type` through `project_links`) can be left empty (just trailing commas: `,,,,,,`)
-   - Descriptions containing commas must be wrapped in double quotes
-   - Descriptions containing literal double quotes must escape them as `""` (e.g. `"to be a ""defense influencer."""`)
-
-2. Regenerate embeddings:
+   - `description` is the winner's text with their name removed from the front, wrapped in
+     double quotes; literal quotes inside are doubled (`""`)
+   - the remaining six columns are left empty (`,,,,,,`)
+2. Regenerate and validate, from the repo root:
    ```bash
-   source venv/bin/activate
-   python3 scripts/generate-embeddings.py
+   pipeline/.venv/bin/python pipeline/scripts/generate-embeddings.py
+   python3 pipeline/scripts/validate.py
+   npm run build
    ```
-   This reads `data/ev-winners.csv` and outputs `data/ev-winners-with-embeddings.csv` and `data/ev-winners-with-embeddings.json`.
+3. Commit the CSV and JSON together and push. Vercel deploys `main`.
+
+## History
+
+This folder started life as the separate `nqureshi/ev-search-python` repo, merged in
+September 2026. Its full commit history is still there.
