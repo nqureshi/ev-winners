@@ -53,3 +53,41 @@ export function formatLongDate(iso: string) {
     if (isNaN(d.getTime())) return iso;
     return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 }
+
+const normalize = (s: string) =>
+    s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+
+export type NameMatch = { winner: Winner; score: number };
+
+/**
+ * Match winners by name. Scores: 3 = name starts with the term, 2 = every
+ * term word is a prefix of some name word ("tyler c" → "Tyler Cowen"),
+ * 1 = plain substring. Repeated names are collapsed to one entry.
+ */
+export function matchNames(data: Winner[], term: string, limit = 5, minScore = 1): Winner[] {
+    const q = normalize(term);
+    if (q.length < 2) return [];
+    const tokens = q.split(/\s+/).filter(Boolean);
+    const seen = new Set<string>();
+    const scored: NameMatch[] = [];
+    for (const winner of data) {
+        const n = normalize(winner.name);
+        if (seen.has(n)) continue;
+        let score = 0;
+        if (n.startsWith(q)) {
+            score = 3;
+        } else {
+            const words = n.split(/[\s,\-()]+/);
+            if (tokens.every((t) => words.some((w) => w.startsWith(t)))) score = 2;
+            else if (q.length >= 3 && n.includes(q)) score = 1;
+        }
+        if (score >= minScore) {
+            seen.add(n);
+            scored.push({ winner, score });
+        }
+    }
+    scored.sort((a, b) => b.score - a.score || a.winner.name.localeCompare(b.winner.name));
+    return scored.slice(0, limit).map((s) => s.winner);
+}
+
+export const sameName = (a: string, b: string) => normalize(a) === normalize(b);

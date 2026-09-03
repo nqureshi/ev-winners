@@ -27,8 +27,7 @@ export default function Footer({ stats }: { stats: Stats }) {
                             Submit a data update to the <A href="https://github.com/nqureshi/ev-search-python/tree/main/data">GitHub repo</A>.
                         </p>
                         <p>
-                            Project by <A href="https://nabeelqu.co">Nabeel S. Qureshi</A>. Design originally inspired by{' '}
-                            <A href="https://thesephist.com">Linus Lee</A>&rsquo;s <A href="https://ycvibecheck.com/">YC Vibe Check</A>.
+                            Project by <A href="https://nabeelqu.co">Nabeel S. Qureshi</A>.
                         </p>
                     </div>
                 </div>

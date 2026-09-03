@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { ArrowDownUp, ArrowUpRight, Search, X } from "lucide-react"
+import { ArrowDownUp, ArrowUpRight, User, X } from "lucide-react"
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
@@ -15,28 +15,26 @@ interface WinnersListProps {
     total: number
     cohorts: string[]
     query: string
+    selectedName: string
+    nameMatches: Winner[]
     loading: boolean
     error: boolean
     onClear: () => void
+    onSelectName: (name: string) => void
     onRetry: () => void
 }
 
-export default function WinnersList({ data, total, cohorts, query, loading, error, onClear, onRetry }: WinnersListProps) {
-    const [nameFilter, setNameFilter] = useState('')
+export default function WinnersList({ data, total, cohorts, query, selectedName, nameMatches, loading, error, onClear, onSelectName, onRetry }: WinnersListProps) {
     const [cohort, setCohort] = useState(ALL_COHORTS)
     const [newestFirst, setNewestFirst] = useState(true)
     const [visible, setVisible] = useState(PAGE_SIZE)
 
     const searching = query !== ''
+    const pinned = selectedName !== ''
 
     const filtered = useMemo(() => {
-        const needle = nameFilter.trim().toLowerCase()
-        let rows = data.filter((w) => {
-            if (cohort !== ALL_COHORTS && w.batch !== cohort) return false
-            if (needle && !w.name.toLowerCase().includes(needle)) return false
-            return true
-        })
-        // Semantic results keep their similarity order; the full list is sorted by date.
+        let rows = cohort === ALL_COHORTS ? data : data.filter((w) => w.batch === cohort)
+        // Semantic results keep their similarity order; everything else is sorted by date.
         if (!searching) {
             rows = [...rows].sort((a, b) => {
                 const byDate = a.date_announced.localeCompare(b.date_announced) || a.id - b.id
@@ -44,25 +42,27 @@ export default function WinnersList({ data, total, cohorts, query, loading, erro
             })
         }
         return rows
-    }, [data, cohort, nameFilter, searching, newestFirst])
+    }, [data, cohort, searching, newestFirst])
 
     // Reset the page window whenever the underlying list changes.
     useEffect(() => {
         setVisible(PAGE_SIZE)
-    }, [data, cohort, nameFilter, newestFirst])
+    }, [data, cohort, newestFirst])
 
     const shown = filtered.slice(0, visible)
     const remaining = filtered.length - shown.length
 
     const topSimilarity = searching && data.length ? data[0].similarity ?? 0 : 0
-    const hasFilters = nameFilter.trim() !== '' || cohort !== ALL_COHORTS
+    const hasFilters = cohort !== ALL_COHORTS
 
     return (
         <section aria-labelledby="results-heading" className="mx-auto max-w-5xl px-5 pb-20 sm:px-8">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                 <div className="min-w-0">
                     <h2 id="results-heading" className="font-serif text-[1.7rem] leading-tight text-ink sm:text-3xl">
-                        {searching ? (
+                        {pinned ? (
+                            <em className="text-mr-700">{selectedName}</em>
+                        ) : searching ? (
                             <>
                                 Closest matches for <em className="text-mr-700">&ldquo;{query}&rdquo;</em>
                             </>
@@ -71,7 +71,9 @@ export default function WinnersList({ data, total, cohorts, query, loading, erro
                         )}
                     </h2>
                     <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-muted">
-                        {loading ? (
+                        {pinned ? (
+                            <span>{data.length === 1 ? '1 grant' : `${data.length} grants`}</span>
+                        ) : loading ? (
                             <span>Ranking {total.toLocaleString('en-US')} winners by similarity…</span>
                         ) : searching ? (
                             <span>
@@ -85,14 +87,14 @@ export default function WinnersList({ data, total, cohorts, query, loading, erro
                                     : `${filtered.length.toLocaleString('en-US')} of ${total.toLocaleString('en-US')} grantees`}
                             </span>
                         )}
-                        {searching ? (
+                        {searching || pinned ? (
                             <button
                                 type="button"
                                 onClick={onClear}
                                 className="inline-flex items-center gap-1 rounded-md font-medium text-mr-700 underline-offset-2 hover:underline"
                             >
                                 <X className="h-3.5 w-3.5" aria-hidden="true" />
-                                Clear search
+                                {pinned ? 'Show all winners' : 'Clear search'}
                             </button>
                         ) : (
                             <button
@@ -108,23 +110,11 @@ export default function WinnersList({ data, total, cohorts, query, loading, erro
                 </div>
 
                 <div className="flex gap-2">
-                    <div className="relative min-w-0 flex-1 md:w-56 md:flex-none">
-                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint" aria-hidden="true" />
-                        <label htmlFor="name-filter" className="sr-only">Filter by name</label>
-                        <input
-                            id="name-filter"
-                            type="text"
-                            placeholder="Filter by name"
-                            value={nameFilter}
-                            onChange={(event) => setNameFilter(event.target.value)}
-                            className="h-10 w-full rounded-lg border border-paper-line bg-white pl-9 pr-3 text-sm text-ink shadow-card placeholder:text-ink-faint focus:border-mr-500 focus:outline-none focus:ring-2 focus:ring-mr-500/25"
-                        />
-                    </div>
                     <Select value={cohort} onValueChange={setCohort}>
                         <SelectTrigger
                             aria-label="Filter by cohort"
                             className={cn(
-                                "h-10 w-[9.5rem] shrink-0 rounded-lg border-paper-line bg-white text-sm shadow-card focus:ring-2 focus:ring-mr-500/25 focus:ring-offset-0 sm:w-44",
+                                "h-10 w-full rounded-lg border-paper-line bg-white text-sm shadow-card focus:ring-2 focus:ring-mr-500/25 focus:ring-offset-0 sm:w-44",
                                 cohort !== ALL_COHORTS && "border-mr-400 text-mr-800"
                             )}
                         >
@@ -142,6 +132,28 @@ export default function WinnersList({ data, total, cohorts, query, loading, erro
                 </div>
             </div>
 
+            {searching && !loading && !error && nameMatches.length > 0 && (
+                <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-mr-100 bg-mr-50/70 px-4 py-3 text-sm">
+                    <span className="inline-flex items-center gap-1.5 text-ink-soft">
+                        <User className="h-4 w-4 text-mr-600" aria-hidden="true" />
+                        Looking for a person?
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                        {nameMatches.map((winner) => (
+                            <button
+                                key={winner.id}
+                                type="button"
+                                onClick={() => onSelectName(winner.name)}
+                                className="inline-flex items-center gap-1.5 rounded-full border border-mr-200 bg-white px-3 py-1 text-[13px] font-medium text-ink transition-colors hover:border-mr-400 hover:bg-mr-50"
+                            >
+                                {winner.name}
+                                <span className="text-xs font-normal text-ink-muted">{cohortLabel(winner.batch)}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             <div className="mt-6">
                 {loading ? (
                     <SkeletonRows />
@@ -156,16 +168,13 @@ export default function WinnersList({ data, total, cohorts, query, loading, erro
                     <EmptyState
                         title="No winners match"
                         body={
-                            searching
-                                ? 'None of the closest matches fit these filters. Clear a filter or widen the search.'
-                                : 'Try a different name or cohort.'
+                            searching || pinned
+                                ? 'Nothing here fits the selected cohort. Clear the cohort filter or widen the search.'
+                                : 'Try a different cohort.'
                         }
                         action={{
-                            label: 'Clear filters',
-                            onClick: () => {
-                                setNameFilter('')
-                                setCohort(ALL_COHORTS)
-                            },
+                            label: 'Clear cohort filter',
+                            onClick: () => setCohort(ALL_COHORTS),
                         }}
                     />
                 ) : (

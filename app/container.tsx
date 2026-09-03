@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
 import SearchBar from "./searchBar"
 import WinnersList from "./winnersList"
-import { Winner, compareCohorts } from "./types"
+import { Winner, compareCohorts, matchNames, sameName } from "./types"
 
 export type Stats = {
     winners: number
@@ -32,7 +32,10 @@ export default function Container({ data, stats }: { data: Winner[]; stats: Stat
     const pathname = usePathname()
     const router = useRouter()
 
+    // Two mutually exclusive modes, both driven by the URL:
+    //   ?query=… semantic search   ?name=… a single winner picked from the typeahead
     const query = (searchParams.get('query') || '').trim()
+    const selectedName = (searchParams.get('name') || '').trim()
 
     const [results, setResults] = useState<Winner[] | null>(null)
     const [loading, setLoading] = useState(query !== '')
@@ -41,6 +44,17 @@ export default function Container({ data, stats }: { data: Winner[]; stats: Stat
     const cohorts = useMemo(
         () => Array.from(new Set(data.map((w) => w.batch))).sort(compareCohorts),
         [data]
+    )
+
+    // Winners whose name closely matches the semantic query, surfaced above the results.
+    const nameMatches = useMemo(
+        () => (query.length >= 3 ? matchNames(data, query, 5, 2) : []),
+        [data, query]
+    )
+
+    const nameRows = useMemo(
+        () => (selectedName ? data.filter((w) => sameName(w.name, selectedName)) : null),
+        [data, selectedName]
     )
 
     useEffect(() => {
@@ -67,14 +81,12 @@ export default function Container({ data, stats }: { data: Winner[]; stats: Stat
         }
     }, [query])
 
-    const setQuery = useCallback(
-        (term: string) => {
+    const navigate = useCallback(
+        (updates: Record<string, string>) => {
             const params = new URLSearchParams(searchParams.toString())
-            const trimmed = term.trim()
-            if (trimmed) {
-                params.set('query', trimmed)
-            } else {
-                params.delete('query')
+            for (const [key, value] of Object.entries(updates)) {
+                if (value) params.set(key, value)
+                else params.delete(key)
             }
             const qs = params.toString()
             router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
@@ -82,19 +94,34 @@ export default function Container({ data, stats }: { data: Winner[]; stats: Stat
         [searchParams, pathname, router]
     )
 
+    const setQuery = useCallback((term: string) => navigate({ query: term.trim(), name: '' }), [navigate])
+    const setName = useCallback((name: string) => navigate({ name: name.trim(), query: '' }), [navigate])
+    const clear = useCallback(() => navigate({ query: '', name: '' }), [navigate])
+
     return (
         <>
-            <SearchBar query={query} onSearch={setQuery} stats={stats} loading={loading} />
+            <SearchBar
+                data={data}
+                query={query}
+                selectedName={selectedName}
+                onSearch={setQuery}
+                onSelectName={setName}
+                onClear={clear}
+                stats={stats}
+                loading={loading}
+            />
             <WinnersList
-                data={results ?? data}
+                data={nameRows ?? results ?? data}
                 total={data.length}
                 cohorts={cohorts}
                 query={query}
+                selectedName={selectedName}
+                nameMatches={nameMatches}
                 loading={loading}
                 error={error}
-                onClear={() => setQuery('')}
+                onClear={clear}
+                onSelectName={setName}
                 onRetry={() => {
-                    // Re-run the effect by nudging state; the query itself is unchanged.
                     setError(false)
                     setLoading(true)
                     fetchSimilarity(query).then((res) => {
