@@ -1,76 +1,92 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Warm paper ground, near-black ink, Marginal Revolution green as the accent. */
+    --background: 45 33% 98%;
+    --foreground: 214 14% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
- 
+    --card-foreground: 214 14% 10%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
- 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
- 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
- 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
- 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
- 
+    --popover-foreground: 214 14% 10%;
+
+    --primary: 168 100% 26%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 45 25% 94%;
+    --secondary-foreground: 214 14% 10%;
+
+    --muted: 45 25% 94%;
+    --muted-foreground: 214 8% 45%;
+
+    --accent: 165 63% 95%;
+    --accent-foreground: 168 100% 20%;
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
- 
-    --radius: 0.5rem;
-  }
- 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
- 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
- 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
- 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
- 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
- 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
- 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
- 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
- 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 45 14% 89%;
+    --input: 45 14% 86%;
+    --ring: 168 100% 39%;
+
+    --radius: 0.75rem;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
   }
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "cv11", "ss01", "calt";
+  }
+  ::selection {
+    background: #a5ecd6;
+    color: #0b4c3f;
+  }
+}
+
+@layer utilities {
+  /* Subtle dotted grid behind the hero, fading out toward the results. */
+  .hero-grid {
+    background-image: radial-gradient(rgba(22, 25, 29, 0.09) 1px, transparent 1px);
+    background-size: 22px 22px;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 55%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 55%, rgba(0, 0, 0, 0) 100%);
+  }
+  .hero-glow {
+    background: radial-gradient(60% 50% at 50% 0%, rgba(0, 199, 159, 0.18) 0%, rgba(0, 199, 159, 0) 100%);
+  }
+  .link-underline {
+    text-decoration: underline;
+    text-decoration-color: rgba(0, 199, 159, 0.55);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 3px;
+    transition: text-decoration-color 150ms ease;
+  }
+  .link-underline:hover {
+    text-decoration-color: #00a684;
+  }
+  .skeleton {
+    background: linear-gradient(90deg, #f0eee8 25%, #f8f6f1 50%, #f0eee8 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton, .animate-fade-up { animation: none; }
+    html { scroll-behavior: auto; }
   }
 }

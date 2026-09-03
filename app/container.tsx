@@ -1,81 +1,109 @@
 "use client"
 
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+
 import SearchBar from "./searchBar"
-import WinnersTable from "./winnersTable"
-import { Winner, columns } from "./columns"
-import { useState, useEffect, useMemo } from "react"
-import { getSortedData } from './utils/getSortedData'
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import WinnersList from "./winnersList"
+import { Winner, compareCohorts } from "./types"
 
-async function fetchSimilarity(query: string) {
-    const API_URL = process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3000/api/similarity?query='
-      : '/api/similarity?query=';
-  
+export type Stats = {
+    winners: number
+    cohorts: number
+    firstYear: string
+    latestDate: string
+    latestLink: string | null
+}
+
+async function fetchSimilarity(query: string): Promise<Winner[] | null> {
     try {
-      const response = await fetch((API_URL + query), { cache: 'no-store' });
-      const data = await response.json();
-      // console.log(data); // Log the response
-      return data;
+        const response = await fetch(`/api/similarity?query=${encodeURIComponent(query)}`, { cache: 'no-store' })
+        if (!response.ok) throw new Error(`Similarity request failed: ${response.status}`)
+        const data = await response.json()
+        return Array.isArray(data.results) ? data.results : null
     } catch (error) {
-      console.error('Error:', error);
-      return null;
+        console.error('Error fetching similarity:', error)
+        return null
     }
-  }
+}
 
-export default function Container({ data }: any) {
-    const searchParams = useSearchParams();
-    const params = useMemo(() => new URLSearchParams(searchParams), [searchParams]);
-    const arr: number[] = []
-    
-    const [embedding, setEmbedding] = useState(arr)
-    const [renderedData, setRenderedData] = useState(data);
-    const [query, setQuery] = useState('');
-    const [loading, setLoading] = useState(false);
+export default function Container({ data, stats }: { data: Winner[]; stats: Stats }) {
+    const searchParams = useSearchParams()
+    const pathname = usePathname()
+    const router = useRouter()
 
-    const setLoadingTrue = () => {
-        setLoading(true);
-    }
-    
+    const query = (searchParams.get('query') || '').trim()
+
+    const [results, setResults] = useState<Winner[] | null>(null)
+    const [loading, setLoading] = useState(query !== '')
+    const [error, setError] = useState(false)
+
+    const cohorts = useMemo(
+        () => Array.from(new Set(data.map((w) => w.batch))).sort(compareCohorts),
+        [data]
+    )
+
     useEffect(() => {
-        const q = params.get('query') || '';
-        if (q !== '') {
-            setLoading(true);
-            setQuery(q);
-    
-            // Fetch similarity and then update data
-            fetchSimilarity(q)
-                .then((res) => {
-                    setEmbedding(res.message);
-    
-                    // Once embedding is available, sort and set data
-                    setRenderedData(getSortedData(data, res.message));
-                    setLoading(false);
-                })
-                .catch((error) => {
-                    console.error('Error fetching similarity:', error);
-                });
+        if (!query) {
+            setResults(null)
+            setLoading(false)
+            setError(false)
+            return
         }
-    }, [params, data]); // dependencies
-    
-
-    return(
-        <>
-            <div className="bg-[#00c79f] p-4 rounded-lg mb-6 text-black">
-                <SearchBar setLoadingTrue={setLoadingTrue} />
-            </div>
-            {loading && 
-              <div role="status" className="flex justify-center items-center">
-                  <svg aria-hidden="true" className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                      <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-                  </svg>
-                  <span className="sr-only">Loading...</span>
-              </div>
+        let cancelled = false
+        setLoading(true)
+        setError(false)
+        fetchSimilarity(query).then((res) => {
+            if (cancelled) return
+            if (res) {
+                setResults(res)
+            } else {
+                setError(true)
             }
-            <div>
-                { !loading && <WinnersTable columns={columns} data={renderedData} query={query} /> }
-            </div>
+            setLoading(false)
+        })
+        return () => {
+            cancelled = true
+        }
+    }, [query])
+
+    const setQuery = useCallback(
+        (term: string) => {
+            const params = new URLSearchParams(searchParams.toString())
+            const trimmed = term.trim()
+            if (trimmed) {
+                params.set('query', trimmed)
+            } else {
+                params.delete('query')
+            }
+            const qs = params.toString()
+            router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+        },
+        [searchParams, pathname, router]
+    )
+
+    return (
+        <>
+            <SearchBar query={query} onSearch={setQuery} stats={stats} loading={loading} />
+            <WinnersList
+                data={results ?? data}
+                total={data.length}
+                cohorts={cohorts}
+                query={query}
+                loading={loading}
+                error={error}
+                onClear={() => setQuery('')}
+                onRetry={() => {
+                    // Re-run the effect by nudging state; the query itself is unchanged.
+                    setError(false)
+                    setLoading(true)
+                    fetchSimilarity(query).then((res) => {
+                        if (res) setResults(res)
+                        else setError(true)
+                        setLoading(false)
+                    })
+                }}
+            />
         </>
     )
 }

@@ -1,48 +1,41 @@
-import Image from 'next/image'
-import Link from "next/link"
+import { Suspense } from 'react'
 
+import Header from './header'
+import Container from './container'
+import Footer from './footer'
+import { ResultsSkeleton } from './winnersList'
+import { loadWinners, stripEmbeddings } from './lib/winners'
+import { compareCohorts } from './types'
 
-// UI COMPONENTS
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@/components/ui/select"
-
-import { promises as fs } from 'fs';
-import { Winner, columns } from "./columns"
-
-// COMPONENTS
-import Footer from "./footer"
-import Container from "./container"
+export const dynamic = 'force-dynamic'
 
 export default async function Page() {
+  const winners = await loadWinners()
+  const data = stripEmbeddings(winners)
 
-  // get full dataset to render in Table, this is rendered on first load
-  const path = require('path');
-  const file = await fs.readFile(path.resolve(process.cwd() + '/app/data/ev-winners-with-embeddings.json'), 'utf8');
-  const data = JSON.parse(file);
- 
+  const cohorts = Array.from(new Set(data.map((w) => w.batch))).sort(compareCohorts)
+  const numericCohorts = cohorts.filter((c) => /^\d+$/.test(c)).map(Number)
+  const latestCohort = Math.max(...numericCohorts)
+  const latest = data.reduce((a, b) => (a.date_announced > b.date_announced ? a : b))
+  const firstYear = data.reduce((a, b) => (a.date_announced < b.date_announced ? a : b)).date_announced.slice(0, 4)
+
+  const stats = {
+    winners: data.length,
+    cohorts: latestCohort,
+    firstYear,
+    latestDate: latest.date_announced,
+    latestLink: latest.link,
+  }
+
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold">Emergent Ventures Winners</h1>
-        <div className="flex space-x-4">
-          <Link href="#footer" className="text-blue-600">
-            about
-          </Link>
-          <Link className="text-blue-600" href="https://github.com/nqureshi/ev-winners">
-            github
-          </Link>
-          <Link className="text-blue-600" href="https://github.com/nqureshi/ev-search-python/blob/main/data/ev-winners.csv">
-            data
-          </Link>
-        </div>
-      </div>
-      <div>
-        <Container data={data} />
-      </div>
-      <div id="footer" className="text-gray-500 mt-4 w-4/5">
-        <Footer />
-      </div>
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <main className="flex-1">
+        <Suspense fallback={<ResultsSkeleton />}>
+          <Container data={data} stats={stats} />
+        </Suspense>
+      </main>
+      <Footer stats={stats} />
     </div>
   )
 }
