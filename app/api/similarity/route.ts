@@ -1,7 +1,14 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { pipeline } from '@xenova/transformers';
+import path from 'path';
+import { pipeline, env } from '@xenova/transformers';
 import { loadWinners, stripEmbeddings } from '@/app/lib/winners';
 import { getSortedData } from '@/app/utils/getSortedData';
+
+// Load the model from files vendored in the repo (models/) instead of
+// downloading it from Hugging Face on every cold start. The serverless
+// filesystem is read-only, so the download could never be cached anyway.
+env.localModelPath = path.join(process.cwd(), 'models');
+env.allowRemoteModels = false;
 
 // Model singleton to prevent reloading on each request
 let modelCache: any = null;

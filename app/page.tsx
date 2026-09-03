@@ -7,7 +7,6 @@ import { ResultsSkeleton } from './winnersList'
 import { loadWinners, stripEmbeddings } from './lib/winners'
 import { compareCohorts } from './types'
 
-export const dynamic = 'force-dynamic'
 
 export default async function Page() {
   const winners = await loadWinners()

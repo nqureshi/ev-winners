@@ -7,6 +7,10 @@ const nextConfig = {
     // Indicate that these packages should not be bundled by webpack
     experimental: {
         serverComponentsExternalPackages: ['onnxruntime-node'],
+        // The similarity route reads the vendored model files at runtime.
+        outputFileTracingIncludes: {
+            '/api/similarity': ['./models/**/*'],
+        },
     },
 };
 
