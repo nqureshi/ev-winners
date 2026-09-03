@@ -24,7 +24,7 @@ export default function Footer({ stats }: { stats: Stats }) {
                         <p>
                             Winners are collected from the announcement posts on Marginal Revolution, starting from{' '}
                             <A href="https://newscience.org/emergent-ventures-winners/">Alexey Guzey&rsquo;s base</A>. Spotted a gap?
-                            Submit a data update to the <A href="https://github.com/nqureshi/ev-search-python/tree/main/data">GitHub repo</A>.
+                            Submit a data update to the <A href="https://github.com/nqureshi/ev-winners/tree/main/pipeline/data">GitHub repo</A>.
                         </p>
                         <p>
                             Project by <A href="https://nabeelqu.co">Nabeel S. Qureshi</A>.
@@ -42,7 +42,7 @@ export default function Footer({ stats }: { stats: Stats }) {
                     <dd className="tabular-nums text-ink-soft">{stats.winners.toLocaleString('en-US')}</dd>
                     <dt className="text-ink-muted">Data</dt>
                     <dd className="text-ink-soft">
-                        <A href="https://github.com/nqureshi/ev-search-python/blob/main/data/ev-winners.csv">CSV on GitHub</A>
+                        <A href="https://github.com/nqureshi/ev-winners/blob/main/pipeline/data/ev-winners.csv">CSV on GitHub</A>
                     </dd>
                     <dt className="text-ink-muted">Search</dt>
                     <dd className="text-ink-soft">

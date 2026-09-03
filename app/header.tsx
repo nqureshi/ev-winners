@@ -4,7 +4,7 @@ import { ArrowUpRight } from "lucide-react"
 const NAV = [
   { label: "About", href: "#about", external: false },
   { label: "GitHub", href: "https://github.com/nqureshi/ev-winners", external: true },
-  { label: "Data", href: "https://github.com/nqureshi/ev-search-python/blob/main/data/ev-winners.csv", external: true },
+  { label: "Data", href: "https://github.com/nqureshi/ev-winners/blob/main/pipeline/data/ev-winners.csv", external: true },
 ]
 
 export default function Header() {
