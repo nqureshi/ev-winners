@@ -34,7 +34,9 @@ export function compareCohorts(a: string, b: string) {
     if (aNum && bNum) return parseInt(a) - parseInt(b);
     if (aNum) return -1;
     if (bNum) return 1;
-    return a.localeCompare(b);
+    // Named tranches are numbered too ("India 2" ... "India 18"), so compare
+    // them naturally; a plain localeCompare puts "India 10" before "India 2".
+    return a.localeCompare(b, undefined, { numeric: true });
 }
 
 /** "Cohort 12" for numeric batches, otherwise the batch name as-is. */
