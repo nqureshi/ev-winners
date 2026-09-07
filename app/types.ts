@@ -93,3 +93,43 @@ export function matchNames(data: Winner[], term: string, limit = 5, minScore = 1
 }
 
 export const sameName = (a: string, b: string) => normalize(a) === normalize(b);
+
+/**
+ * Which Emergent Ventures programme a cohort belongs to. The numbered cohorts
+ * (plus the Progress Studies tranche) are "main"; the regional and prize
+ * tranches are opt-in for semantic search so they don't crowd out the main
+ * results, while name search always covers everyone.
+ */
+export type Track = 'main' | 'india' | 'africa' | 'covid';
+
+export const OPTIONAL_TRACKS: { key: Exclude<Track, 'main'>; label: string }[] = [
+    { key: 'india', label: 'India' },
+    { key: 'africa', label: 'Africa & Caribbean' },
+    { key: 'covid', label: 'Covid prizes' },
+];
+
+export const TRACK_LABELS: Record<Track, string> = {
+    main: 'Main cohorts',
+    india: 'India',
+    africa: 'Africa & Caribbean',
+    covid: 'Covid prizes',
+};
+
+export function trackOf(batch: string): Track {
+    if (batch.startsWith('India')) return 'india';
+    if (batch.startsWith('Africa')) return 'africa';
+    if (batch.startsWith('Covid')) return 'covid';
+    return 'main';
+}
+
+/** Parse the `tracks` URL/query param ("india,africa") into known optional tracks, in canonical order. */
+export function parseTracks(value: string | null | undefined): Track[] {
+    const wanted = new Set((value || '').split(',').map((s) => s.trim().toLowerCase()));
+    return OPTIONAL_TRACKS.filter((t) => wanted.has(t.key)).map((t) => t.key);
+}
+
+/** True when the winner is in the main track or one of the opted-in tracks. */
+export function inTracks(winner: Pick<Winner, 'batch'>, tracks: Track[]): boolean {
+    const track = trackOf(winner.batch);
+    return track === 'main' || tracks.includes(track);
+}

@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useState } from "react"
 import { ArrowDownUp, ArrowUpRight, User, X } from "lucide-react"
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
-import { Winner, cohortLabel, formatDate, formatLink } from "./types"
+import { TRACK_LABELS, Track, Winner, cohortLabel, formatDate, formatLink, trackOf } from "./types"
 
 const ALL_COHORTS = "__all__"
 const PAGE_SIZE = 100
@@ -13,6 +13,9 @@ const PAGE_SIZE = 100
 interface WinnersListProps {
     data: Winner[]
     total: number
+    /** Winners the semantic search ranked over, after the track filter. */
+    searchPool: number
+    tracks: Track[]
     cohorts: string[]
     query: string
     selectedName: string
@@ -24,7 +27,7 @@ interface WinnersListProps {
     onRetry: () => void
 }
 
-export default function WinnersList({ data, total, cohorts, query, selectedName, nameMatches, loading, error, onClear, onSelectName, onRetry }: WinnersListProps) {
+export default function WinnersList({ data, total, searchPool, tracks, cohorts, query, selectedName, nameMatches, loading, error, onClear, onSelectName, onRetry }: WinnersListProps) {
     const [cohort, setCohort] = useState(ALL_COHORTS)
     const [newestFirst, setNewestFirst] = useState(true)
     const [visible, setVisible] = useState(PAGE_SIZE)
@@ -55,6 +58,21 @@ export default function WinnersList({ data, total, cohorts, query, selectedName,
     const topSimilarity = searching && data.length ? data[0].similarity ?? 0 : 0
     const hasFilters = cohort !== ALL_COHORTS
 
+    // "Main cohorts" or "Main cohorts + India, Covid prizes" — what the semantic search ranked over.
+    const scope = tracks.length
+        ? `${TRACK_LABELS.main} + ${tracks.map((t) => TRACK_LABELS[t]).join(', ')}`
+        : `${TRACK_LABELS.main} only`
+
+    // Group the cohort dropdown by programme so thirty named tranches stay scannable.
+    const cohortGroups = useMemo(() => {
+        const groups = new Map<Track, string[]>()
+        for (const c of cohorts) {
+            const track = trackOf(c)
+            groups.set(track, [...(groups.get(track) ?? []), c])
+        }
+        return Array.from(groups.entries())
+    }, [cohorts])
+
     return (
         <section aria-labelledby="results-heading" className="mx-auto max-w-5xl px-5 pb-20 sm:px-8">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -74,11 +92,13 @@ export default function WinnersList({ data, total, cohorts, query, selectedName,
                         {pinned ? (
                             <span>{data.length === 1 ? '1 grant' : `${data.length} grants`}</span>
                         ) : loading ? (
-                            <span>Ranking {total.toLocaleString('en-US')} winners by similarity…</span>
+                            <span>Ranking {searchPool.toLocaleString('en-US')} winners by similarity…</span>
                         ) : searching ? (
                             <span>
-                                Top {data.length} of {total.toLocaleString('en-US')} by semantic similarity
+                                Top {data.length} of {searchPool.toLocaleString('en-US')} by semantic similarity
                                 {hasFilters && filtered.length !== data.length && `, ${filtered.length} shown`}
+                                <span className="mx-1.5 text-ink-faint">·</span>
+                                <span className="text-ink-soft">{scope}</span>
                             </span>
                         ) : (
                             <span className="tabular-nums">
@@ -122,10 +142,17 @@ export default function WinnersList({ data, total, cohorts, query, selectedName,
                         </SelectTrigger>
                         <SelectContent className="max-h-72 rounded-lg border-paper-line">
                             <SelectItem value={ALL_COHORTS}>All cohorts</SelectItem>
-                            {cohorts.map((option) => (
-                                <SelectItem key={option} value={option}>
-                                    {cohortLabel(option)}
-                                </SelectItem>
+                            {cohortGroups.map(([track, options]) => (
+                                <SelectGroup key={track}>
+                                    <SelectLabel className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">
+                                        {TRACK_LABELS[track]}
+                                    </SelectLabel>
+                                    {options.map((option) => (
+                                        <SelectItem key={option} value={option}>
+                                            {cohortLabel(option)}
+                                        </SelectItem>
+                                    ))}
+                                </SelectGroup>
                             ))}
                         </SelectContent>
                     </Select>

@@ -5,7 +5,7 @@ import { ArrowRight, CornerDownLeft, Loader2, Search, User, X } from "lucide-rea
 
 import { cn } from "@/lib/utils"
 import type { Stats } from "./container"
-import { Winner, cohortLabel, matchNames } from "./types"
+import { OPTIONAL_TRACKS, Track, Winner, cohortLabel, matchNames } from "./types"
 
 export const SUGGESTIONS = [
     'Progress studies', 'AI', 'Biotech', 'Climate change', 'Education', 'Startups',
@@ -24,9 +24,12 @@ interface SearchBarProps {
     onSearch: (term: string) => void
     onSelectName: (name: string) => void
     onClear: () => void
+    /** Optional tracks (India, Africa & Caribbean, Covid prizes) included in semantic search. */
+    tracks: Track[]
+    onTracksChange: (tracks: Track[]) => void
 }
 
-export default function SearchBar({ data, query, selectedName, loading, stats, onSearch, onSelectName, onClear }: SearchBarProps) {
+export default function SearchBar({ data, query, selectedName, loading, stats, onSearch, onSelectName, onClear, tracks, onTracksChange }: SearchBarProps) {
     const current = query || selectedName
     const [term, setTerm] = useState(current)
     const [showAll, setShowAll] = useState(false)
@@ -265,7 +268,45 @@ export default function SearchBar({ data, query, selectedName, loading, stats, o
                     </form>
                 </div>
 
-                <div className="mt-5 flex flex-wrap items-center gap-2">
+                <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px] text-ink-muted">
+                    <span>
+                        Topic search covers the <span className="font-medium text-ink-soft">main cohorts</span>.
+                        <span className="hidden sm:inline"> Names always match everyone.</span>
+                    </span>
+                    <span className="text-xs font-semibold uppercase tracking-wider text-ink-faint">Also include</span>
+                    <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Also include in topic search">
+                        {OPTIONAL_TRACKS.map((track) => {
+                            const checked = tracks.includes(track.key)
+                            return (
+                                <label
+                                    key={track.key}
+                                    className={cn(
+                                        "inline-flex cursor-pointer select-none items-center gap-1.5 rounded-full border px-2.5 py-1 text-[13px] font-medium transition-colors",
+                                        checked
+                                            ? "border-mr-500 bg-mr-50 text-mr-900"
+                                            : "border-paper-line bg-white/80 text-ink-soft hover:border-mr-300 hover:bg-mr-50 hover:text-mr-800"
+                                    )}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={checked}
+                                        onChange={(event) =>
+                                            onTracksChange(
+                                                event.target.checked
+                                                    ? [...tracks, track.key]
+                                                    : tracks.filter((t) => t !== track.key)
+                                            )
+                                        }
+                                        className="h-3.5 w-3.5 rounded border-paper-line accent-mr-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mr-500"
+                                    />
+                                    {track.label}
+                                </label>
+                            )
+                        })}
+                    </div>
+                </div>
+
+                <div className="mt-4 flex flex-wrap items-center gap-2">
                     <span className="mr-1 text-xs font-semibold uppercase tracking-wider text-ink-faint">Try</span>
                     {SUGGESTIONS.map((suggestion, index) => {
                         const isActive = suggestion.toLowerCase() === query.toLowerCase()

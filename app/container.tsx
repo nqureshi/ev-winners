@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
 import SearchBar from "./searchBar"
 import WinnersList from "./winnersList"
-import { Winner, compareCohorts, matchNames, sameName } from "./types"
+import { Track, Winner, compareCohorts, inTracks, matchNames, parseTracks, sameName } from "./types"
 
 export type Stats = {
     winners: number
@@ -15,9 +15,11 @@ export type Stats = {
     latestLink: string | null
 }
 
-async function fetchSimilarity(query: string): Promise<Winner[] | null> {
+async function fetchSimilarity(query: string, tracks: Track[]): Promise<Winner[] | null> {
     try {
-        const response = await fetch(`/api/similarity?query=${encodeURIComponent(query)}`, { cache: 'no-store' })
+        const params = new URLSearchParams({ query })
+        if (tracks.length) params.set('tracks', tracks.join(','))
+        const response = await fetch(`/api/similarity?${params}`, { cache: 'no-store' })
         if (!response.ok) throw new Error(`Similarity request failed: ${response.status}`)
         const data = await response.json()
         return Array.isArray(data.results) ? data.results : null
@@ -36,6 +38,10 @@ export default function Container({ data, stats }: { data: Winner[]; stats: Stat
     //   ?query=… semantic search   ?name=… a single winner picked from the typeahead
     const query = (searchParams.get('query') || '').trim()
     const selectedName = (searchParams.get('name') || '').trim()
+    // ?tracks=india,africa widens semantic search beyond the main cohorts.
+    // Name search ignores it and always covers every winner.
+    const tracksParam = searchParams.get('tracks') || ''
+    const tracks = useMemo(() => parseTracks(tracksParam), [tracksParam])
 
     const [results, setResults] = useState<Winner[] | null>(null)
     const [loading, setLoading] = useState(query !== '')
@@ -52,6 +58,9 @@ export default function Container({ data, stats }: { data: Winner[]; stats: Stat
         [data, query]
     )
 
+    // How many winners the semantic search ranks, given the selected tracks.
+    const searchPool = useMemo(() => data.filter((w) => inTracks(w, tracks)).length, [data, tracks])
+
     const nameRows = useMemo(
         () => (selectedName ? data.filter((w) => sameName(w.name, selectedName)) : null),
         [data, selectedName]
@@ -67,7 +76,7 @@ export default function Container({ data, stats }: { data: Winner[]; stats: Stat
         let cancelled = false
         setLoading(true)
         setError(false)
-        fetchSimilarity(query).then((res) => {
+        fetchSimilarity(query, tracks).then((res) => {
             if (cancelled) return
             if (res) {
                 setResults(res)
@@ -79,7 +88,7 @@ export default function Container({ data, stats }: { data: Winner[]; stats: Stat
         return () => {
             cancelled = true
         }
-    }, [query])
+    }, [query, tracks])
 
     const navigate = useCallback(
         (updates: Record<string, string>) => {
@@ -97,6 +106,7 @@ export default function Container({ data, stats }: { data: Winner[]; stats: Stat
     const setQuery = useCallback((term: string) => navigate({ query: term.trim(), name: '' }), [navigate])
     const setName = useCallback((name: string) => navigate({ name: name.trim(), query: '' }), [navigate])
     const clear = useCallback(() => navigate({ query: '', name: '' }), [navigate])
+    const setTracks = useCallback((next: Track[]) => navigate({ tracks: next.join(',') }), [navigate])
 
     return (
         <>
@@ -109,10 +119,14 @@ export default function Container({ data, stats }: { data: Winner[]; stats: Stat
                 onClear={clear}
                 stats={stats}
                 loading={loading}
+                tracks={tracks}
+                onTracksChange={setTracks}
             />
             <WinnersList
                 data={nameRows ?? results ?? data}
                 total={data.length}
+                searchPool={searchPool}
+                tracks={tracks}
                 cohorts={cohorts}
                 query={query}
                 selectedName={selectedName}
@@ -124,7 +138,7 @@ export default function Container({ data, stats }: { data: Winner[]; stats: Stat
                 onRetry={() => {
                     setError(false)
                     setLoading(true)
-                    fetchSimilarity(query).then((res) => {
+                    fetchSimilarity(query, tracks).then((res) => {
                         if (res) setResults(res)
                         else setError(true)
                         setLoading(false)

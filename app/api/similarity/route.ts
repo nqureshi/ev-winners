@@ -3,6 +3,7 @@ import path from 'path';
 import { pipeline, env } from '@xenova/transformers';
 import { loadWinners, stripEmbeddings } from '@/app/lib/winners';
 import { getSortedData } from '@/app/utils/getSortedData';
+import { inTracks, parseTracks } from '@/app/types';
 
 // Load the model from files vendored in the repo (models/) instead of
 // downloading it from Hugging Face on every cold start. The serverless
@@ -39,14 +40,18 @@ async function embed(query: string): Promise<number[]> {
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const query = (searchParams.get('query') || '').trim()
+    // Semantic search covers the main cohorts by default; regional and prize
+    // tranches are included only when listed in ?tracks=india,africa,covid.
+    const tracks = parseTracks(searchParams.get('tracks'))
     if (!query) {
-        return NextResponse.json({ query, results: [] }, { status: 200 });
+        return NextResponse.json({ query, tracks, pool: 0, results: [] }, { status: 200 });
     }
-    console.log(`Received query: "${query}"`);
+    console.log(`Received query: "${query}" tracks=[${tracks.join(',')}]`);
     const startTime = performance.now();
     const [queryEmbedding, winners] = await Promise.all([embed(query), loadWinners()]);
-    const results = stripEmbeddings(getSortedData(winners, queryEmbedding));
+    const pool = winners.filter((w) => inTracks(w, tracks));
+    const results = stripEmbeddings(getSortedData(pool, queryEmbedding));
     const endTime = performance.now();
-    console.log(`Total request processed in ${Math.round(endTime - startTime)}ms`);
-    return NextResponse.json({ query, results }, { status: 200 });
+    console.log(`Total request processed in ${Math.round(endTime - startTime)}ms (pool ${pool.length})`);
+    return NextResponse.json({ query, tracks, pool: pool.length, results }, { status: 200 });
 }
