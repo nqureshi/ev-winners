@@ -19,14 +19,21 @@ const instrumentSerif = Instrument_Serif({
 
 const description = 'Every Emergent Ventures winner in one place, with semantic search over what they are working on.'
 
+// Vercel redirects the bare domain to www, and Google selected www as the
+// canonical host, so every self-referencing URL uses it.
+const siteUrl = 'https://www.evwinners.org'
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://evwinners.org'),
+  metadataBase: new URL(siteUrl),
   title: 'Emergent Ventures Winners',
   description,
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: 'Emergent Ventures Winners',
     description,
-    url: 'https://evwinners.org',
+    url: siteUrl,
     siteName: 'Emergent Ventures Winners',
     type: 'website',
     images: ["https://www.mercatus.org/themes/custom/mercatus/images/mercatus-social-media.png"],

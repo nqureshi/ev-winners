@@ -7,7 +7,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const latest = winners.reduce((a, b) => (a.date_announced > b.date_announced ? a : b))
     return [
         {
-            url: 'https://evwinners.org',
+            url: 'https://www.evwinners.org',
             lastModified: new Date(latest.date_announced + 'T00:00:00Z'),
             changeFrequency: 'weekly',
             priority: 1,

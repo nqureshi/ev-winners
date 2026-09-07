@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
             // The similarity endpoint is only useful with a query; keep crawlers off it.
             disallow: '/api/',
         },
-        sitemap: 'https://evwinners.org/sitemap.xml',
+        sitemap: 'https://www.evwinners.org/sitemap.xml',
     }
 }
