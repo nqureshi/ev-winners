@@ -2,9 +2,13 @@
 const nextConfig = {
     // Keep the native ONNX runtime out of the bundle; it is loaded at runtime.
     serverExternalPackages: ['onnxruntime-node'],
-    // The similarity route reads the vendored model files at runtime.
+    // Include the model and ONNX's Linux shared libraries. The native binding
+    // loads libonnxruntime.so dynamically, so automatic tracing can miss it.
     outputFileTracingIncludes: {
-        '/api/similarity': ['./models/**/*'],
+        '/api/similarity': [
+            './models/**/*',
+            './node_modules/onnxruntime-node/bin/napi-v3/linux/**/*',
+        ],
     },
 };
 
